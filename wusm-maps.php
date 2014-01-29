@@ -4,9 +4,37 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 0.5
+Version: 2014.01.29.0
 Author URI: 
 */
+
+add_action( 'init', 'github_plugin_updater_test_init' );
+function github_plugin_updater_test_init() {
+
+        include_once 'updater.php';
+
+        define( 'WP_GITHUB_FORCE_UPDATE', true );
+
+        if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+
+                $config = array(
+                        'slug' => plugin_basename( __FILE__ ),
+                        'proper_folder_name' => 'wusm-maps',
+                        'api_url' => 'https://api.github.com/repos/coderaaron/wusm-maps',
+                        'raw_url' => 'https://raw.github.com/coderaaron/wusm-maps/master',
+                        'github_url' => 'https://github.com/coderaaron/wusm-maps',
+                        'zip_url' => 'https://github.com/coderaaron/wusm-maps/archive/master.zip',
+                        'sslverify' => true,
+                        'requires' => '3.0',
+                        'tested' => '3.8',
+                        'readme' => 'README.md',
+                        'access_token' => '',
+                );
+
+                new WP_GitHub_Updater( $config );
+        }
+
+}
 
 class wusm_maps_plugin {
 	private $maps_text;
