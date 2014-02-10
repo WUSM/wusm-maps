@@ -4,35 +4,37 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 2014.01.29.0
+Version: 2014.02.10.0
 Author URI: 
 */
 
-add_action( 'init', 'github_plugin_updater_test_init' );
-function github_plugin_updater_test_init() {
+add_action( 'init', 'github_plugin_updater_wusm_maps_init' );
+function github_plugin_updater_wusm_maps_init() {
 
-        include_once 'updater.php';
+		if( ! class_exists( 'WP_GitHub_Updater' ) )
+			include_once 'updater.php';
 
-        define( 'WP_GITHUB_FORCE_UPDATE', true );
+		if( ! defined( 'WP_GITHUB_FORCE_UPDATE' ) )
+			define( 'WP_GITHUB_FORCE_UPDATE', true );
 
-        if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+		if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
 
-                $config = array(
-                        'slug' => plugin_basename( __FILE__ ),
-                        'proper_folder_name' => 'wusm-maps',
-                        'api_url' => 'https://api.github.com/repos/coderaaron/wusm-maps',
-                        'raw_url' => 'https://raw.github.com/coderaaron/wusm-maps/master',
-                        'github_url' => 'https://github.com/coderaaron/wusm-maps',
-                        'zip_url' => 'https://github.com/coderaaron/wusm-maps/archive/master.zip',
-                        'sslverify' => true,
-                        'requires' => '3.0',
-                        'tested' => '3.8',
-                        'readme' => 'README.md',
-                        'access_token' => '',
-                );
+				$config = array(
+						'slug' => plugin_basename( __FILE__ ),
+						'proper_folder_name' => 'wusm-maps',
+						'api_url' => 'https://api.github.com/repos/coderaaron/wusm-maps',
+						'raw_url' => 'https://raw.github.com/coderaaron/wusm-maps/master',
+						'github_url' => 'https://github.com/coderaaron/wusm-maps',
+						'zip_url' => 'https://github.com/coderaaron/wusm-maps/archive/master.zip',
+						'sslverify' => true,
+						'requires' => '3.0',
+						'tested' => '3.8',
+						'readme' => 'README.md',
+						'access_token' => '',
+				);
 
-                new WP_GitHub_Updater( $config );
-        }
+				new WP_GitHub_Updater( $config );
+		}
 
 }
 
@@ -114,6 +116,7 @@ class Map_List_Walker extends Walker_page {
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
 		$nonce = wp_create_nonce("wusm_nonce");
 		$meta = get_post_meta( $page->ID, 'location' );
+		$loc_id = get_post_meta( $page->ID, 'num' );
 		if ( $depth )
 			$indent = str_repeat("\t", $depth);
 		else
@@ -122,6 +125,8 @@ class Map_List_Walker extends Walker_page {
 		extract($args, EXTR_SKIP);
 		
 		$output .= $indent . '<li>';
+		if(isset($loc_id[0]) && ($loc_id[0] != ''))
+			$link_after .= " (" . $loc_id[0] . ")";
 		if($meta[0] != '')
 			$output .= '<a data-nonce="' . $nonce . '" data-page_id="' . $page->ID . '" href="' . get_permalink($page->ID) . '">';
 		$output .= $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after;
