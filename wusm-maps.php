@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 14.02.10.1
+Version: 14.02.10.2
 Author URI: 
 */
 
@@ -49,6 +49,48 @@ class wusm_maps_plugin {
 		add_action( 'wp_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
 		add_action( 'wp_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
 		add_action( 'wp_enqueue_scripts', array( $this, 'maps_shortcode_scripts' ) );
+		add_action( 'init', array( $this, 'register_maps_location_post_type') );
+	}
+
+	function register_maps_location_post_type() {
+		$labels = array(
+			'name' => 'Map Location',
+			'singular_name' => 'Map Locations',
+			'add_new' => 'Add New',
+			'add_new_item' => 'Add New Map Location',
+			'edit_item' => 'Edit Map Location',
+			'new_item' => 'New Map Location',
+			'all_items' => 'All Map Locations',
+			'view_item' => 'View Map Location',
+			'search_items' => 'Search Map Locations',
+			'not_found' =>	'No Map Locations found',
+			'not_found_in_trash' => 'No Map Locations found in Trash', 
+			'parent_item_colon' => '',
+			'menu_name' => 'Map Locations'
+		);
+
+		$args = array(
+			'labels' => $labels,
+			'menu_icon' => 'dashicons-location-alt',
+			'public' => true,
+			'publicly_queryable' => true,
+			'show_ui' => true, 
+			'show_in_menu' => true, 
+			'query_var' => true,
+			'capability_type' => 'post',
+			'has_archive' => false, 
+			'hierarchical' => true,
+			'menu_position' => null,
+			'supports' => array(
+				'title',
+				'editor',
+				'thumbnail',
+				'revisions',
+				'page-attributes',
+			)
+		); 
+
+		register_post_type( 'location', $args );
 	}
 
 	/**
