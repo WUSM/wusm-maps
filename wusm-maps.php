@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 14.02.10.2
+Version: 14.02.11.1
 Author URI: 
 */
 
@@ -155,6 +155,8 @@ class wusm_maps_plugin {
 new wusm_maps_plugin();
 
 class Map_List_Walker extends Walker_page {
+	private $i = 0;
+
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
 		$nonce = wp_create_nonce("wusm_nonce");
 		$meta = get_post_meta( $page->ID, 'location' );
@@ -166,7 +168,9 @@ class Map_List_Walker extends Walker_page {
 
 		extract($args, EXTR_SKIP);
 		
-		$output .= $indent . '<li>';
+		$class = ( strtolower($page->post_title) == 'visitor parking' ) ? " class='parking'" : "";
+
+		$output .= $indent . "<li$class>";
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
 			$link_after .= " (" . $loc_id[0] . ")";
 		if($meta[0] != '')
@@ -174,5 +178,12 @@ class Map_List_Walker extends Walker_page {
 		$output .= $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after;
 		if($meta[0] != '')
 			$output .= '</a>';
+	}
+
+	function start_lvl( &$output, $depth = 0, $args = array() ) {
+		$indent = str_repeat("\t", $depth);
+		$output .= "$indent<ul class='children ul-$this->i'>\n";
+		$this->i++;
+		error_log(print_r($args['pages_with_children'], true));
 	}
 }

@@ -1,4 +1,6 @@
 jQuery(document).ready(function($) {
+	var parking_open = -1;
+
 	// Enable the visual refresh
 	google.maps.visualRefresh = true;
 
@@ -37,7 +39,7 @@ jQuery(document).ready(function($) {
 					var location_obj = jQuery.parseJSON( data ),
 						coords_array = location_obj.coords.split(','),
 						myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
-						image = '/wp-content/themes/som/inc/img/map_marker_closed.png',
+						image = '/wp-content/plugins/wusm-maps/map_marker_closed.png',
 						marker = new google.maps.Marker({
 							position: myLatlng,
 							map: map,
@@ -61,6 +63,14 @@ jQuery(document).ready(function($) {
 			show_location_info(id, nonce);
 			$('.open').removeClass();
 			$(this).parent().addClass('open');
+		});
+		$(".parking").on("click", function() {
+			if(parking_open == -1){
+				$(".ul-0").animate({ "height" : 194 });
+			} else {
+				$(".ul-0").animate({ "height" : 345 });
+			}
+			parking_open *= -1;
 		});
 	}
 
@@ -94,7 +104,7 @@ jQuery(document).ready(function($) {
 						content: content,
 						maxWidth: 495
 					}),
-					image = '/wp-content/themes/som/inc/img/map_marker_open.png',
+					image = '/wp-content/plugins/wusm-maps/map_marker_open.png',
 					marker = new google.maps.Marker({
 						position: myLatlng,
 						map: map,
