@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 14.02.12.1
+Version: 14.02.12.2
 Author URI: 
 */
 
@@ -182,12 +182,17 @@ class Map_List_Walker extends Walker_page {
 		
 		$class = ( strtolower($page->post_title) == 'visitor parking' ) ? " class='parking'" : "";
 
+		$title = apply_filters( 'the_title', $page->post_title, $page->ID );
+
+		if($class !== "")
+			$title .= " <span style='font-weight:normal;font-size:10px;'>(click to expand)</span>";
+
 		$output .= $indent . "<li$class>";
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
 			$link_after .= " (" . $loc_id[0] . ")";
 		if($meta[0] != '')
 			$output .= '<a data-xcoord="' . $coord[0] . '" data-ycoord="' . $coord[1] . '" data-nonce="' . $nonce . '" data-page_id="' . $page->ID . '" href="' . get_permalink($page->ID) . '">';
-		$output .= $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after;
+		$output .= $link_before . $title . $link_after;
 		if($meta[0] != '')
 			$output .= '</a>';
 	}
