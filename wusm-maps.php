@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 14.02.11.1
+Version: 14.02.12.1
 Author URI: 
 */
 
@@ -91,6 +91,8 @@ class wusm_maps_plugin {
 		); 
 
 		register_post_type( 'location', $args );
+
+		add_image_size( 'map-img', 220, 220, true );
 	}
 
 	/**
@@ -135,7 +137,12 @@ class wusm_maps_plugin {
 		$loc_post = get_post($loc_id);
 		
 		$location = get_field('location', $loc_id);
-		$img = get_field('location_image', $loc_id);
+
+		$img_id = get_field('location_image', $loc_id);
+		$size = "map-img"; // (thumbnail, medium, large, full or custom size)
+		$image = wp_get_attachment_image_src( $img_id, $size );
+		$img = $image[0];
+
 		$content = wpautop($loc_post->post_content);
 		
 		$location_array = array(
@@ -160,6 +167,11 @@ class Map_List_Walker extends Walker_page {
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
 		$nonce = wp_create_nonce("wusm_nonce");
 		$meta = get_post_meta( $page->ID, 'location' );
+		
+		$debug =  get_field('location', $page->ID);
+		if( isset($debug['coordinates']) )
+			$coord = explode(',', $debug['coordinates']);
+		
 		$loc_id = get_post_meta( $page->ID, 'num' );
 		if ( $depth )
 			$indent = str_repeat("\t", $depth);
@@ -174,7 +186,7 @@ class Map_List_Walker extends Walker_page {
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
 			$link_after .= " (" . $loc_id[0] . ")";
 		if($meta[0] != '')
-			$output .= '<a data-nonce="' . $nonce . '" data-page_id="' . $page->ID . '" href="' . get_permalink($page->ID) . '">';
+			$output .= '<a data-xcoord="' . $coord[0] . '" data-ycoord="' . $coord[1] . '" data-nonce="' . $nonce . '" data-page_id="' . $page->ID . '" href="' . get_permalink($page->ID) . '">';
 		$output .= $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after;
 		if($meta[0] != '')
 			$output .= '</a>';
@@ -184,6 +196,5 @@ class Map_List_Walker extends Walker_page {
 		$indent = str_repeat("\t", $depth);
 		$output .= "$indent<ul class='children ul-$this->i'>\n";
 		$this->i++;
-		error_log(print_r($args['pages_with_children'], true));
 	}
 }

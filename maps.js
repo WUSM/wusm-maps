@@ -14,46 +14,24 @@ jQuery(document).ready(function($) {
 			center: latlng,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
-		map = new google.maps.Map(document.getElementById('map-canvas'),
-		mapOptions);
-	}
-
-	if($("#map-container")[0]) {
-		google.maps.event.addDomListener(window, 'load', initialize);
-
+		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 		$("#location-list li a").each(function(index) {
 			// We'll pass this variable to the PHP function example_ajax_request
 			var id = $(this).attr("data-page_id"),
-				nonce = $(this).attr("data-nonce");
-			 
-			// This does the ajax request
-			$.ajax({
-				type : "post",
-				url: SOMAJAX.ajaxurl,
-				data: {
-					'action':'show_location',
-					'id' : id,
-					'nonce' : nonce
-				},
-				success:function(data) {
-					var location_obj = jQuery.parseJSON( data ),
-						coords_array = location_obj.coords.split(','),
-						myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
-						image = '/wp-content/plugins/wusm-maps/map_marker_closed.png',
-						marker = new google.maps.Marker({
-							position: myLatlng,
-							map: map,
-							title: location_obj.title,
-							icon: image
-						});
+				nonce = $(this).attr("data-nonce"),
+				x = $(this).attr("data-xcoord"),
+				y = $(this).attr("data-ycoord"),
+				myLatlng = new google.maps.LatLng( x, y ),
+				image = '/wp-content/plugins/wusm-maps/map_marker_closed.png',
+				marker = new google.maps.Marker({
+					position: myLatlng,
+					map: map,
+					title: '',
+					icon: image
+				});
 
-					google.maps.event.addListener(marker, 'click', function() {
-						show_location_info(id, nonce);
-					});
-				},
-				error: function(errorThrown){
-					console.log(errorThrown);
-				}
+			google.maps.event.addListener(marker, 'click', function() {
+				show_location_info(id, nonce);
 			});
 		}).on("click", function(e) {
 			// We'll pass this variable to the PHP function example_ajax_request
@@ -71,7 +49,13 @@ jQuery(document).ready(function($) {
 				$(".ul-0").animate({ "height" : 345 });
 			}
 			parking_open *= -1;
+		}).children().click(function(e) {
+			return false;
 		});
+	}
+
+	if($("#map-container")[0]) {
+		google.maps.event.addDomListener(window, 'load', initialize);
 	}
 
 	function show_location_info(i,n) {
@@ -90,7 +74,7 @@ jQuery(document).ready(function($) {
 				var location_obj = jQuery.parseJSON( data ),
 					content = "",
 					coords_array = location_obj.coords.split(',');
-
+				console.log(location_obj.image);
 				if(location_obj.image)
 					content += "<img class='loc-image' src=" + location_obj.image + ">";
 				content += "<div class='loc-div'><h3>" + location_obj.title + "</h3><p class='loc-p'>" + location_obj.address + "</p>" + location_obj.content + "</div>";

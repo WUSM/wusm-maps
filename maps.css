@@ -124,15 +124,20 @@
 	font-weight: bold;
 }
 .loc-image {
-	width: 220px;
+	margin: 20px 0 0 20px;
 	display: inline-block;
 	float: left;
 }
 
 .loc-div {
-	width: 265px;
+	margin-top: 20px;
+	width: 250px;
 	padding-left: 20px;
 	float: left;
+}
+
+.loc-div h3 {
+	margin-top: 0;
 }
 
 .maps-contents p.loc-p {
