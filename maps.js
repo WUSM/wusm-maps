@@ -77,7 +77,7 @@ jQuery(document).ready(function($) {
 				console.log(location_obj.image);
 				if(location_obj.image)
 					content += "<img class='loc-image' src=" + location_obj.image + ">";
-				content += "<div class='loc-div'><h3>" + location_obj.title + "</h3><p class='loc-p'>" + location_obj.address + "</p>" + location_obj.content + "</div>";
+				content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content + "</div>";
 				content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
 				content += "<input type='text' name='saddr' placeholder='Type your address' id='address'>";
 				content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
