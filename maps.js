@@ -6,7 +6,7 @@ jQuery(document).ready(function($) {
 
 	var map, last_marker = false,
 		last_window = false,
-		latlng = new google.maps.LatLng(38.6368785,-90.2575685);
+		latlng = new google.maps.LatLng(38.635,-90.258);
 	function initialize() {
 		var mapOptions = {
 			zoom: 16,
