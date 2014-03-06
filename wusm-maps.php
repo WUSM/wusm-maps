@@ -102,13 +102,21 @@ class wusm_maps_plugin {
 	 */
 	function maps_shortcode_scripts() {
 		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
-		wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
+		if(!defined('WP_LOCAL_INSTALL'))
+			wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
+		else
+			wp_enqueue_script( 'maps-js', plugins_url('maps.min.js', __FILE__) );
 		wp_register_style( 'maps-styles', plugins_url('maps.css', __FILE__) );
 		wp_enqueue_style( 'maps-styles' );
 	}
 
 	function maps_shortcode() {
 		$map_list_walker = new Map_List_Walker();
+
+		$count_pages = count( get_pages( array( 'post_type' => 'location', 'parent' => 0 ) ) );
+		// Total height is 600px, each entry is 36px
+		// We have to add one for the "Finad a Location" header
+		$max_height = 600 - ( 36 * ( $count_pages + 1 ) );
 
 		$output = "<div id='map-container'>";
 		$output .= "<div id='map-canvas'></div>";
@@ -119,7 +127,7 @@ class wusm_maps_plugin {
 			'post_type'    => 'location'
 		);
 
-		$output .= "<ul id='location-list'>";
+		$output .= "<ul data-max_height='$max_height' id='location-list'>";
 		$output .= "<li class='title-li'>Find a Location<span id='map-reset'>RESET</span></li>";
 		$output .= wp_list_pages( $args );
 		$output .= "</ul>";
@@ -162,8 +170,6 @@ class wusm_maps_plugin {
 new wusm_maps_plugin();
 
 class Map_List_Walker extends Walker_page {
-	private $i = 0;
-
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
 		$nonce = wp_create_nonce("wusm_nonce");
 		$meta = get_post_meta( $page->ID, 'location' );
@@ -180,12 +186,10 @@ class Map_List_Walker extends Walker_page {
 
 		extract($args, EXTR_SKIP);
 		
-		$class = ( strtolower($page->post_title) == 'visitor parking' ) ? " class='parking'" : "";
+		$count_children = count( get_pages( array( 'post_type' => 'location', 'parent' => $page->ID ) ) );
+		$class = ( $count_children > 0 ) ? " class='parent'" : "";
 
 		$title = apply_filters( 'the_title', $page->post_title, $page->ID );
-
-		if($class !== "")
-			$title .= " <span style='font-weight:normal;font-size:10px;'>(click to expand)</span>";
 
 		$output .= $indent . "<li$class>";
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
@@ -199,7 +203,6 @@ class Map_List_Walker extends Walker_page {
 
 	function start_lvl( &$output, $depth = 0, $args = array() ) {
 		$indent = str_repeat("\t", $depth);
-		$output .= "$indent<ul class='children ul-$this->i'>\n";
-		$this->i++;
+		$output .= "$indent<ul class='child'>\n";
 	}
 }

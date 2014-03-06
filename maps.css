@@ -63,26 +63,27 @@
 	font-size: 18px;
 }
 
-#location-list .children {
+#location-list .child {
 	overflow-y: scroll;
 	margin: 10px -20px -10px -20px;
-	max-height: 345px;
+	display: none;
+	/*max-height: 345px;*/
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	box-shadow: inset 0  8px 8px -8px #696868, 
                 inset 0 -8px 8px -8px #696868;
 }
 
-#location-list .children li {
+#location-list .child li {
 	font-weight: normal;
 }
 
-#location-list .children::-webkit-scrollbar {
+#location-list .child::-webkit-scrollbar {
 	max-width: 10px;
 	background-color: rgba(0,0,0,.1);
 	-webkit-appearance: none;
 }
-#location-list .children::-webkit-scrollbar-thumb {
+#location-list .child::-webkit-scrollbar-thumb {
 	background-color: rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
@@ -98,12 +99,13 @@
 	background: #900;
 	width: 135px;
 	border: none;
+	margin: 10px 0;
 	color: #fff;
 	font-size: 12px;
 	text-transform: uppercase;
 	font-family: Arial, sans-serif;
 	text-shadow: 1px 1px 1px #770101;
-	height: 52px;
+	height: 50px;
 }
 
 #address {
@@ -156,6 +158,7 @@
 	max-width: none;
 }
 
-.parking  {
+.parent  {
 	cursor: pointer;
+	color: #900;
 }
