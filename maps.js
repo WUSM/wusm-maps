@@ -68,7 +68,7 @@ jQuery(document).ready(function($) {
 		// This does the ajax request
 		$.ajax({
 			type : "post",
-			url: ajaxurl,
+			url: SOMAAJAX.ajaxurl,
 			data: {
 				'action':'show_location',
 				'id' : i,
