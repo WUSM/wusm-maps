@@ -102,10 +102,7 @@ class wusm_maps_plugin {
 	 */
 	function maps_shortcode_scripts() {
 		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
-		if(!defined('WP_LOCAL_INSTALL'))
-			wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
-		else
-			wp_enqueue_script( 'maps-js', plugins_url('maps.min.js', __FILE__) );
+		wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
 		wp_register_style( 'maps-styles', plugins_url('maps.css', __FILE__) );
 		wp_enqueue_style( 'maps-styles' );
 	}
