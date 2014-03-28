@@ -1,4 +1,6 @@
 jQuery(document).ready(function($) {
+	$("#location-list li").click(function(e) { e.preventDefault(); });
+	
 	// Enable the visual refresh
 	google.maps.visualRefresh = true;
 
