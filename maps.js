@@ -70,7 +70,7 @@ jQuery(document).ready(function($) {
 		// This does the ajax request
 		$.ajax({
 			type : "post",
-			url: ajaxurl,
+			url: ajax_object.ajax_url,
 			data: {
 				'action':'show_location',
 				'id' : i,
