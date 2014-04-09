@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:14.04.09.1
+Version:14.04.09.2
 Author URI: 
 */
 
@@ -42,8 +42,8 @@ class wusm_maps_plugin {
 	private $maps_text;
 
 	/**
-	 *
-	 */
+	*
+	*/
 	public function __construct() {
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
 		add_action( 'wp_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
@@ -96,10 +96,10 @@ class wusm_maps_plugin {
 	}
 
 	/**
-	 * Enqueue styles.
-	 *
-	 * @since 0.1.0
-	 */
+	* Enqueue styles.
+	*
+	* @since 0.1.0
+	*/
 	function maps_shortcode_scripts() {
 		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
 		wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
@@ -134,9 +134,9 @@ class wusm_maps_plugin {
 	}
 
 	function get_location_window() {
-		if ( !wp_verify_nonce( $_REQUEST['nonce'], "wusm_nonce")) {
-			  exit("Processing error");
-		 }
+		/*if ( !wp_verify_nonce( $_REQUEST['nonce'], "wusm_nonce")) {
+			exit("Processing error");
+		}*/
 
 		$loc_id = $_POST['id'];
 		$loc_post = get_post($loc_id);
