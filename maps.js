@@ -74,7 +74,7 @@ jQuery(document).ready(function($) {
 			data: {
 				'action':'show_location',
 				'id' : i,
-				'nonce' : n
+				'_ajax_nonce' : n
 			},
 			success:function(data) {
 				close_em();

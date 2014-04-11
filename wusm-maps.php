@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:14.04.09.3
+Version:14.04.11.0
 Author URI: 
 */
 
@@ -134,10 +134,7 @@ class wusm_maps_plugin {
 	}
 
 	function get_location_window() {
-		if ( !check_ajax_referer( 'wusm_nonce', 'nonce' ) ) {
-			echo "Processing error";
-			die();
-		}
+		check_ajax_referer( 'wusm-location' );
 
 		$loc_id = $_POST['id'];
 		$loc_post = get_post($loc_id);
@@ -169,7 +166,7 @@ new wusm_maps_plugin();
 
 class Map_List_Walker extends Walker_page {
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
-		$nonce = wp_create_nonce("wusm_nonce");
+		$nonce = wp_create_nonce("wusm-location");
 		$meta = get_post_meta( $page->ID, 'location' );
 		
 		$debug =  get_field('location', $page->ID);
