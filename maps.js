@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-	$("#location-list li").click(function(e) { e.preventDefault(); });
+	$('#location-list li').click(function(e) { e.preventDefault(); });
 	
 	// Enable the visual refresh
 	google.maps.visualRefresh = true;
@@ -16,20 +16,19 @@ jQuery(document).ready(function($) {
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-		max_height = $("#location-list").data("max_height");
+		max_height = $('#location-list').data('max_height');
 
-		$(".child").each(function() {
+		$('.child').each(function() {
 			$(this).css( { 'max-height' : max_height } );
 		});
 
-		$("#location-list .child").first().show().addClass( "expanded" );
+		$('#location-list .child').first().show().addClass( "expanded" );
 
-		$("#location-list li a").each(function(index) {
+		$('#location-list li a').each(function(index) {
 			// We'll pass this variable to the PHP function example_ajax_request
-			var id = $(this).attr("data-page_id"),
-				nonce = $(this).attr("data-nonce"),
-				x = $(this).attr("data-xcoord"),
-				y = $(this).attr("data-ycoord"),
+			var id = $(this).attr('data-page_id'),
+				x = $(this).attr('data-xcoord'),
+				y = $(this).attr('data-ycoord'),
 				myLatlng = new google.maps.LatLng( x, y ),
 				image = '/wp-content/plugins/wusm-maps/map_marker_closed.png',
 				marker = new google.maps.Marker({
@@ -40,21 +39,20 @@ jQuery(document).ready(function($) {
 				});
 
 			google.maps.event.addListener(marker, 'click', function() {
-				show_location_info(id, nonce);
+				show_location_info(id);
 			});
-		}).on("click", function(e) {
+		}).on('click', function(e) {
 			// We'll pass this variable to the PHP function example_ajax_request
-			var id = $(this).attr("data-page_id"),
-				nonce = $(this).attr("data-nonce");
+			var id = $(this).attr('data-page_id');
 			 
-			show_location_info(id, nonce);
+			show_location_info(id);
 			$('.open').removeClass();
 			$(this).parent().addClass('open');
 		});
 		
-		$(".parent").on("click", function() {
+		$('.parent').on('click', function() {
 			if( !$(this).children( ".child" ).hasClass( "expanded" ) ) {
-				$(".expanded").slideToggle().removeClass( "expanded" );
+				$('.expanded').slideToggle().removeClass( "expanded" );
 				$(this).children( ".child" ).slideToggle().addClass( "expanded" );
 			}
 		}).children().click(function(e) {
@@ -62,56 +60,61 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	if($("#map-container")[0]) {
+	if($('#map-container')[0]) {
 		google.maps.event.addDomListener(window, 'load', initialize);
 	}
 
-	function show_location_info(i,n) {
+	function show_location_info(i) {
+		var nonce = $('#location-list').attr('data-nonce');
+		console.log(nonce);
+
 		// This does the ajax request
 		$.ajax({
-			type : "post",
+			type : 'post',
 			url: ajax_object.ajax_url,
 			data: {
 				'action':'show_location',
 				'id' : i,
-				'_ajax_nonce' : n
+				'_ajax_nonce' : nonce
 			},
 			success:function(data) {
-				close_em();
-				
-				var location_obj = jQuery.parseJSON( data ),
-					content = "",
-					coords_array = location_obj.coords.split(',');
-				
-				if(location_obj.image)
-					content += "<img class='loc-image' src=" + location_obj.image + ">";
-				content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content + "</div>";
-				content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
-				content += "<input type='text' name='saddr' placeholder='Type your address' id='address'>";
-				content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
-				content += "<button id='get-directions'>Get Directions</button></form>";
+				if( data !== '-1' ) {
+					close_em();
+					
+					var location_obj = jQuery.parseJSON( data ),
+						content = '',
+						coords_array = location_obj.coords.split(',');
+					
+					if(location_obj.image)
+						content += "<img class='loc-image' src=" + location_obj.image + ">";
+					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content + "</div>";
+					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
+					content += "<input type='text' name='saddr' placeholder='Type your address' id='address'>";
+					content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
+					content += "<button id='get-directions'>Get Directions</button></form>";
 
-				var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
-					infowindow = new google.maps.InfoWindow({
-						content: content,
-						maxWidth: 495
-					}),
-					image = '/wp-content/plugins/wusm-maps/map_marker_open.png',
-					marker = new google.maps.Marker({
-						position: myLatlng,
-						map: map,
-						title: location_obj.title,
-						icon: image
+					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
+						infowindow = new google.maps.InfoWindow({
+							content: content,
+							maxWidth: 495
+						}),
+						image = '/wp-content/plugins/wusm-maps/map_marker_open.png',
+						marker = new google.maps.Marker({
+							position: myLatlng,
+							map: map,
+							title: location_obj.title,
+							icon: image
+						});
+
+					google.maps.event.addListener(infowindow,'closeclick',function(){
+						close_em();
 					});
 
-				google.maps.event.addListener(infowindow,'closeclick',function(){
-					close_em();
-				});
-
-				infowindow.open(map,marker);
-				// save marker/window so we can close them later
-				last_marker = marker;
-				last_window = infowindow;
+					infowindow.open(map,marker);
+					// save marker/window so we can close them later
+					last_marker = marker;
+					last_window = infowindow;
+				}
 			},
 			error: function(errorThrown){
 				console.log(errorThrown);

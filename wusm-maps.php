@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:14.04.11.0
+Version:14.04.21.0
 Author URI: 
 */
 
@@ -114,6 +114,7 @@ class wusm_maps_plugin {
 		// Total height is 600px, each entry is 36px
 		// We have to add one for the "Finad a Location" header
 		$max_height = 600 - ( 36 * ( $count_pages + 1 ) );
+		$nonce = wp_create_nonce("wusm-location");
 
 		$output = "<div id='map-container'>";
 		$output .= "<div id='map-canvas'></div>";
@@ -124,7 +125,7 @@ class wusm_maps_plugin {
 			'post_type'    => 'location'
 		);
 
-		$output .= "<ul data-max_height='$max_height' id='location-list'>";
+		$output .= "<ul data-max_height='$max_height' id='location-list' data-nonce='$nonce'>";
 		$output .= "<li class='title-li'>Find a Location<span id='map-reset'>RESET</span></li>";
 		$output .= wp_list_pages( $args );
 		$output .= "</ul>";
@@ -166,7 +167,7 @@ new wusm_maps_plugin();
 
 class Map_List_Walker extends Walker_page {
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
-		$nonce = wp_create_nonce("wusm-location");
+		
 		$meta = get_post_meta( $page->ID, 'location' );
 		
 		$debug =  get_field('location', $page->ID);
@@ -190,7 +191,7 @@ class Map_List_Walker extends Walker_page {
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
 			$link_after .= " (" . $loc_id[0] . ")";
 		if($meta[0] != '')
-			$output .= '<a data-xcoord="' . $coord[0] . '" data-ycoord="' . $coord[1] . '" data-nonce="' . $nonce . '" data-page_id="' . $page->ID . '" href="' . get_permalink($page->ID) . '">';
+			$output .= '<a data-xcoord="' . $coord[0] . '" data-ycoord="' . $coord[1] . '" data-page_id="' . $page->ID . '" href="' . get_permalink($page->ID) . '">';
 		$output .= $link_before . $title . $link_after;
 		if($meta[0] != '')
 			$output .= '</a>';
