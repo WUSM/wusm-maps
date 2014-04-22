@@ -73,9 +73,9 @@ jQuery(document).ready(function($) {
 			type : 'post',
 			url: ajax_object.ajax_url,
 			data: {
-				'action':'show_location',
-				'id' : i,
-				'_ajax_nonce' : nonce
+				action   : 'show_location',
+				id       : i,
+				_wpnonce : nonce
 			},
 			success:function(data) {
 				if( data !== '-1' ) {
