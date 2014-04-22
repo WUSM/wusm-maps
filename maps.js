@@ -65,9 +65,6 @@ jQuery(document).ready(function($) {
 	}
 
 	function show_location_info(i) {
-		var nonce = $('#location-list').attr('data-nonce');
-		console.log(nonce);
-
 		// This does the ajax request
 		$.ajax({
 			type : 'post',
@@ -75,7 +72,6 @@ jQuery(document).ready(function($) {
 			data: {
 				action   : 'show_location',
 				id       : i,
-				_wpnonce : nonce
 			},
 			success:function(data) {
 				if( data !== '-1' ) {

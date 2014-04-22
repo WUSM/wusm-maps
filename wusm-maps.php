@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:14.04.22.1
+Version:14.04.22.2
 Author URI: 
 */
 
@@ -114,8 +114,7 @@ class wusm_maps_plugin {
 		// Total height is 600px, each entry is 36px
 		// We have to add one for the "Finad a Location" header
 		$max_height = 600 - ( 36 * ( $count_pages + 1 ) );
-		$nonce = wp_create_nonce("wusm-location");
-
+		
 		$output = "<div id='map-container'>";
 		$output .= "<div id='map-canvas'></div>";
 		$args = array(
@@ -125,7 +124,7 @@ class wusm_maps_plugin {
 			'post_type'    => 'location'
 		);
 
-		$output .= "<ul data-max_height='$max_height' id='location-list' data-nonce='$nonce'>";
+		$output .= "<ul data-max_height='$max_height' id='location-list'>";
 		$output .= "<li class='title-li'>Find a Location<span id='map-reset'>RESET</span></li>";
 		$output .= wp_list_pages( $args );
 		$output .= "</ul>";
@@ -135,8 +134,6 @@ class wusm_maps_plugin {
 	}
 
 	function get_location_window() {
-		check_ajax_referer( 'wusm-location' );
-
 		$loc_id = $_POST['id'];
 		$loc_post = get_post($loc_id);
 		
