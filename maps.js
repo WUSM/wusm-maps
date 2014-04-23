@@ -92,7 +92,7 @@ jQuery(document).ready(function($) {
 					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
 						infowindow = new google.maps.InfoWindow({
 							content: content,
-							maxWidth: 495
+							maxWidth: 515
 						}),
 						image = '/wp-content/plugins/wusm-maps/map_marker_open.png',
 						marker = new google.maps.Marker({
