@@ -71,7 +71,7 @@ jQuery(document).ready(function($) {
 			url: ajax_object.ajax_url,
 			data: {
 				action   : 'show_location',
-				id       : i,
+				id       : i
 			},
 			success:function(data) {
 				if( data !== '-1' ) {
