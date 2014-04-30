@@ -111,9 +111,6 @@ jQuery(document).ready(function($) {
 					last_marker = marker;
 					last_window = infowindow;
 				}
-			},
-			error: function(errorThrown){
-				console.log(errorThrown);
 			}
 		});
 	}
