@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:14.05.10.0
+Version:14.05.13.0
 Author URI: 
 */
 

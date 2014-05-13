@@ -90,6 +90,7 @@ jQuery(document).ready(function($) {
 					content += "<button id='get-directions'>Get Directions</button></form>";
 
 					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
+						centered = new google.maps.LatLng( parseFloat(coords_array[0]+200), parseFloat(coords_array[1]-200) ),
 						infowindow = new google.maps.InfoWindow({
 							content: content,
 							maxWidth: 515
@@ -102,10 +103,12 @@ jQuery(document).ready(function($) {
 							icon: image
 						});
 
+
 					google.maps.event.addListener(infowindow,'closeclick',function(){
 						close_em();
 					});
 
+					map.setCenter(centered);
 					infowindow.open(map,marker);
 					// save marker/window so we can close them later
 					last_marker = marker;
