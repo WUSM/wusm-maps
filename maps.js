@@ -81,7 +81,7 @@ jQuery(document).ready(function($) {
 						content = '',
 						coords_array = location_obj.coords.split(',');
 					
-					if(location_obj.image)
+					if( location_obj.image )
 						content += "<img class='loc-image' src=" + location_obj.image + ">";
 					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content + "</div>";
 					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
@@ -90,9 +90,10 @@ jQuery(document).ready(function($) {
 					content += "<button id='get-directions'>Get Directions</button></form>";
 
 					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
-						centered = new google.maps.LatLng( parseFloat(coords_array[0]+200), parseFloat(coords_array[1]-200) ),
+						panTo = new google.maps.LatLng( parseFloat(coords_array[0]) + .003, parseFloat(coords_array[1]) + .003),
 						infowindow = new google.maps.InfoWindow({
 							content: content,
+							disableAutoPan: true,
 							maxWidth: 515
 						}),
 						image = '/wp-content/plugins/wusm-maps/map_marker_open.png',
@@ -103,13 +104,12 @@ jQuery(document).ready(function($) {
 							icon: image
 						});
 
-
-					google.maps.event.addListener(infowindow,'closeclick',function(){
+					google.maps.event.addListener( infowindow, 'closeclick', function(){
 						close_em();
 					});
-
-					map.setCenter(centered);
-					infowindow.open(map,marker);
+					
+					map.panTo( panTo );
+					infowindow.open( map, marker );
 					// save marker/window so we can close them later
 					last_marker = marker;
 					last_window = infowindow;
