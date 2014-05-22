@@ -68,7 +68,7 @@ jQuery(document).ready(function($) {
 		// This does the ajax request
 		$.ajax({
 			type : 'post',
-			url: ajax_object.ajax_url,
+			url: '/wp-content/plugins/wusm-maps/locations.php',
 			data: {
 				action   : 'show_location',
 				id       : i
@@ -81,6 +81,7 @@ jQuery(document).ready(function($) {
 						content = '',
 						coords_array = location_obj.coords.split(',');
 					
+					content += "<div style='width:515px;'>";
 					if( location_obj.image )
 						content += "<img class='loc-image' src=" + location_obj.image + ">";
 					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content + "</div>";
@@ -88,9 +89,10 @@ jQuery(document).ready(function($) {
 					content += "<input type='text' name='saddr' placeholder='Type your address' id='address'>";
 					content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
 					content += "<button id='get-directions'>Get Directions</button></form>";
+					content += "</div>";
 
 					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
-						panTo = new google.maps.LatLng( parseFloat(coords_array[0]) + .003, parseFloat(coords_array[1]) + .003),
+						panTo = new google.maps.LatLng( parseFloat(coords_array[0]) + 0.003, parseFloat(coords_array[1]) + 0.003),
 						infowindow = new google.maps.InfoWindow({
 							content: content,
 							disableAutoPan: true,
