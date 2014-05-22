@@ -46,8 +46,8 @@ jQuery(document).ready(function($) {
 			var id = $(this).attr('data-page_id');
 			 
 			show_location_info(id);
-			$('.open').removeClass();
-			$(this).parent().addClass('open');
+			$('.open-location-box').removeClass();
+			$(this).parent().addClass('open-location-box');
 		});
 		
 		$('.parent').on('click', function() {
@@ -60,7 +60,7 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	if($('#map-container')[0]) {
+	if( $('#map-container')[0] ) {
 		google.maps.event.addDomListener(window, 'load', initialize);
 	}
 
