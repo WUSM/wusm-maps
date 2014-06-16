@@ -86,7 +86,7 @@ jQuery(document).ready(function($) {
 						content += "<img class='loc-image' src=" + location_obj.image + ">";
 					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content + "</div>";
 					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
-					content += "<input type='text' name='saddr' placeholder='Type your address' id='address'>";
+					content += "<input type='text' name='saddr' onfocus=\"if (this.value == 'Type your address') {this.value = '';}\" onblur=\"if (this.value == '') {this.value = 'Type your address';}\" placeholder=\"Type your address\" id='address'>";
 					content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
 					content += "<button id='get-directions'>Get Directions</button></form>";
 					content += "</div>";
