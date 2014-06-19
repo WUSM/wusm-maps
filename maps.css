@@ -90,16 +90,13 @@
 }
 
 #get-directions-box {
-	width: 495px;
-	height: 52px;
 	float: left;
-	padding: 0 0 20px 20px;
+	width: 100%;
 }
 
 .ie7 #get-directions-box {
 	padding: 0;
 	margin: 0;
-	width: 480px;
 }
 
 #address {
@@ -118,7 +115,7 @@
 
 #get-directions {
 	background: #900;
-	width: 135px;
+	width: 100%;
 	border: none;
 	margin: 10px 0;
 	color: #fff;
@@ -150,6 +147,7 @@
 .loc-div {
 	margin-top: 20px;
 	width: 235px;
+	min-height: 220px;
 	padding-left: 20px;
 	float: left;
 }

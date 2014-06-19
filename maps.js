@@ -84,11 +84,11 @@ jQuery(document).ready(function($) {
 					content += "<div style='width:515px;'>";
 					if( location_obj.image )
 						content += "<img class='loc-image' src=" + location_obj.image + ">";
-					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content + "</div>";
+					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content;
 					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
-					content += "<input type='text' name='saddr' onfocus='if (this.value == \"Type your address\") {this.value = \"\";}' onblur='if (this.value == \"\") {this.value = \"Type your address\";}' placeholder='Type your address' id='address'>";
 					content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
-					content += "<button id='get-directions'>Get Directions</button></form>";
+					content += "<button id='get-directions'>Open in Google Maps</button></form>";
+					content += "</div>";
 					content += "</div>";
 
 					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
