@@ -41,9 +41,6 @@ function github_plugin_updater_wusm_maps_init() {
 class wusm_maps_plugin {
 	private $maps_text;
 
-	/**
-	*
-	*/
 	public function __construct() {
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
 		add_action( 'MY_AJAX_HANDLER_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
