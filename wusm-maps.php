@@ -182,7 +182,7 @@ class Map_List_Walker extends Walker_page {
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
 			$link_after .= " (" . $loc_id[0] . ")";
 		if($meta[0] != '')
-			$output .= '<a data-xcoord="' . $coord[0] . '" data-ycoord="' . $coord[1] . '" data-page_id="' . $page->ID . '" href="' . get_permalink($page->ID) . '">';
+			$output .= '<a data-xcoord="' . $coord[0] . '" data-ycoord="' . $coord[1] . '" data-page_id="' . $page->ID . '" href="javascript:false;">';
 		$output .= $link_before . $title . $link_after;
 		if($meta[0] != '')
 			$output .= '</a>';
