@@ -121,7 +121,6 @@
 	color: #fff;
 	font-size: 12px;
 	text-transform: uppercase;
-	font-family: Arial, sans-serif;
 	text-shadow: 1px 1px 1px #770101;
 	height: 50px;
 }
@@ -170,10 +169,6 @@
 
 .gm-style img {
 	max-width: none;
-}
-
-.gm-style-iw p {
-	font-family: Arial, sans-serif;
 }
 
 .parent  {
