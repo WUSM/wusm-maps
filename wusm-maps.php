@@ -8,36 +8,6 @@ Version:14.06.02.0
 Author URI: 
 */
 
-add_action( 'init', 'github_plugin_updater_wusm_maps_init' );
-function github_plugin_updater_wusm_maps_init() {
-
-		if( ! class_exists( 'WP_GitHub_Updater' ) )
-			include_once 'updater.php';
-
-		if( ! defined( 'WP_GITHUB_FORCE_UPDATE' ) )
-			define( 'WP_GITHUB_FORCE_UPDATE', true );
-
-		if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
-
-				$config = array(
-						'slug' => plugin_basename( __FILE__ ),
-						'proper_folder_name' => 'wusm-maps',
-						'api_url' => 'https://api.github.com/repos/wusm/wusm-maps',
-						'raw_url' => 'https://raw.github.com/wusm/wusm-maps/master',
-						'github_url' => 'https://github.com/wusm/wusm-maps',
-						'zip_url' => 'https://github.com/wusm/wusm-maps/archive/master.zip',
-						'sslverify' => true,
-						'requires' => '3.0',
-						'tested' => '3.9.1',
-						'readme' => 'README.md',
-						'access_token' => '',
-				);
-
-				new WP_GitHub_Updater( $config );
-		}
-
-}
-
 class wusm_maps_plugin {
 	private $maps_text;
 
@@ -46,10 +16,11 @@ class wusm_maps_plugin {
 		add_action( 'MY_AJAX_HANDLER_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
 		add_action( 'MY_AJAX_HANDLER_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
 		add_action( 'init', array( $this, 'register_maps_location_post_type') );
+
 	}
 
 	function register_maps_location_post_type() {
-		$menu_position = apply_filters('wusm-maps_menu_position',5);
+		$menu_position = apply_filters('wusm-maps_menu_position', 9);
 
 		$labels = array(
 			'name' => 'Map Location',
@@ -91,6 +62,37 @@ class wusm_maps_plugin {
 		register_post_type( 'location', $args );
 
 		add_image_size( 'map-img', 220, 220, true );
+
+		// ACF5 Upgrade!!!
+		/*$query = new WP_Query( $args = array (
+				'post_type' => 'location',
+				'posts_per_page' => -1,
+			)
+		);
+
+		if ( $query->have_posts() ) {
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				$post_id = get_the_id();
+				$curr_meta = get_post_meta($post_id, 'location');
+				$curr_meta_string = $curr_meta[0];
+				if( is_string( $curr_meta_string ) && $curr_meta_string !== "" ) {
+					$curr_meta_exploded = explode("|", $curr_meta_string);
+
+					$address = $curr_meta_exploded[0];
+					$coord = $curr_meta_exploded[1];
+
+					$coord_exploded = explode(",", $coord);
+					$lat = $coord_exploded[0];
+					$lng = $coord_exploded[1];
+					$new_meta = array('address'=>$address, 'lat'=>$lat, 'lng'=>$lng);
+
+					update_post_meta($post_id, 'location', $new_meta);
+				}
+			}
+		}
+
+		wp_reset_postdata();*/
 	}
 
 	function maps_shortcode() {
@@ -128,7 +130,15 @@ class wusm_maps_plugin {
 		$loc_id = $_POST['id'];
 		$loc_post = get_post($loc_id);
 		
-		$location = get_field('location', $loc_id);
+		$coord_fields = get_field('location', $loc_id);
+
+		if( isset( $coord_fields['coordinates'] ) ) {
+			$coord = $coord_fields['coordinates'];
+		} elseif( isset( $coord_fields['lat'] ) && isset( $coord_fields['lng'] ) ) {
+			$coord = implode(  ",", array( $coord_fields['lat'], $coord_fields['lng'] ) );
+		} else {
+			$coord = "38.6354379, -90.2644422";
+		}
 
 		$img_id = get_field('location_image', $loc_id);
 		$size = "map-img"; // (thumbnail, medium, large, full or custom size)
@@ -138,8 +148,8 @@ class wusm_maps_plugin {
 		$content = wpautop($loc_post->post_content);
 		
 		$location_array = array(
-			'address' => $location['address'],
-			'coords'  => $location['coordinates'],
+			'address' => $coord_fields['address'],
+			'coords'  => $coord,
 			'image'   => $img,
 			'title'   => $loc_post->post_title,
 			'content' => $content
@@ -158,9 +168,14 @@ class Map_List_Walker extends Walker_page {
 		
 		$meta = get_post_meta( $page->ID, 'location' );
 		
-		$debug =  get_field('location', $page->ID);
-		if( isset($debug['coordinates']) )
-			$coord = explode(',', $debug['coordinates']);
+		$coord_fields =  get_field('location', $page->ID);
+		if( isset($coord_fields['coordinates']) ) {
+			$coord = explode(',', $coord_fields['coordinates']);
+		} elseif( isset($coord_fields['lat']) && isset($coord_fields['lng']) ) {
+			$coord = array($coord_fields['lat'], $coord_fields['lng']);
+		} else {
+			$coord = array( 38.6354379, -90.2644422);
+		}
 		
 		$loc_id = get_post_meta( $page->ID, 'num' );
 		if ( $depth )
