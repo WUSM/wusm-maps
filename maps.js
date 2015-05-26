@@ -1,4 +1,14 @@
 jQuery(document).ready(function($) {
+
+	var zoom_level;
+	if ($(window).width() > 960) {
+		zoom_level = 16;
+	} else if ($(window).width() > 700) {
+		zoom_level = 15;
+	} else {
+		zoom_level = 14;
+	}
+
 	$('#location-list li').click(function(e) { e.preventDefault(); });
 	
 	// Enable the visual refresh
@@ -9,8 +19,9 @@ jQuery(document).ready(function($) {
 		last_window = false,
 		latlng = new google.maps.LatLng(38.635,-90.258);
 	function initialize() {
+		
 		var mapOptions = {
-			zoom: 16,
+			zoom: zoom_level,
 			disableDefaultUI: true,
 			center: latlng,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -80,19 +91,31 @@ jQuery(document).ready(function($) {
 					var location_obj = jQuery.parseJSON( data ),
 						content = '',
 						coords_array = location_obj.coords.split(',');
-					
-					content += "<div style='width:515px;'>";
-					if( location_obj.image )
-						content += "<img class='loc-image' src=" + location_obj.image + ">";
-					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3>" + location_obj.content;
+
+					content += "<div class='location-info'>";
+					if ($(window).width() > 700)
+						if( location_obj.image )
+							content += "<img class='loc-image' src=" + location_obj.image + ">";
+					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3><div class='loc-detail'>" + location_obj.content + "</div>";
 					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
 					content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
 					content += "<button id='get-directions'>Open in Google Maps</button></form>";
 					content += "</div>";
 					content += "</div>";
+					
+					var offset_lat,
+						offset_lang;
+
+					if ($(window).width() > 960) {
+						offset_lat = 0.003, offset_lang = 0.0028;
+					} else if ($(window).width() > 700) {
+						offset_lat = 0.006, offset_lang = 0.005;
+					} else {
+						offset_lat = 0.006, offset_lang = 0;
+					}
 
 					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
-						panTo = new google.maps.LatLng( parseFloat(coords_array[0]) + 0.003, parseFloat(coords_array[1]) + 0.003),
+						panTo = new google.maps.LatLng( parseFloat(coords_array[0]) + offset_lat, parseFloat(coords_array[1]) + offset_lang),
 						infowindow = new google.maps.InfoWindow({
 							content: content,
 							disableAutoPan: true,
@@ -122,7 +145,7 @@ jQuery(document).ready(function($) {
 
 	$('#map-reset').click(function() {
 		map.setCenter(latlng);
-		map.setZoom(16);
+		map.setZoom(zoom_level);
 		close_em();
 	});
 
