@@ -120,14 +120,15 @@
 #get-directions {
 	background: #900;
 	width: 100%;
-	max-width: 235px;
+	max-width: 200px;
 	border: none;
 	margin: 10px 0;
 	color: #fff;
 	font-size: 12px;
+	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
 	text-transform: uppercase;
 	text-shadow: 1px 1px 1px #770101;
-	height: 50px;
+	height: 35px;
 }
 
 .ie7 #get-directions {
