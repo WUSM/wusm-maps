@@ -100,8 +100,12 @@ class wusm_maps_plugin {
 			'height'    => $map_icon['height'],
 			'lat'       => $map_center['lat'],
 			'lng'       => $map_center['lng'],
-			'loc_count' => substr_count( $atts['ids'], "," ) + 1
+			'loc_count' => -1
 		);
+
+		if( $atts['ids'] !== null ) {
+			$wusm_map_params['include'] = substr_count( $atts['ids'], "," ) + 1;
+		}
 
 		wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
 		wp_localize_script( 'maps-js', 'WUSMMapParams', $wusm_map_params );
