@@ -5,15 +5,16 @@ jQuery(document).ready(function($) {
 	google.maps.visualRefresh = true;
 
 	var map,
-		max_height  = 528,	// 600-(36*2)
-		last_marker = false,
-		last_window = false,
-		icon_file   = WUSMMapParams.icon,
-		icon_width  = parseInt( WUSMMapParams.width / 2),
-		icon_height = parseInt( WUSMMapParams.height ),
-		lat         = WUSMMapParams.lat,
-		lng         = WUSMMapParams.lng,
-		latlng      = new google.maps.LatLng(lat,lng);
+		max_height   = 528,	// 600-(36*2)
+		hover_marker = false,
+		last_marker  = false,
+		last_window  = false,
+		icon_file    = WUSMMapParams.icon,
+		icon_width   = parseInt( WUSMMapParams.width / 2),
+		icon_height  = parseInt( WUSMMapParams.height ),
+		lat          = WUSMMapParams.lat,
+		lng          = WUSMMapParams.lng,
+		latlng       = new google.maps.LatLng(lat,lng);
 
 	function initialize() {
 		var mapOptions = {
@@ -70,6 +71,29 @@ jQuery(document).ready(function($) {
 			$(this).parent().addClass('open-location-box');
 
 		});
+
+		$('#location-list li').on('mouseenter', function( e ) {
+			var $this    = $(this).children( "a" ),
+				x        = $this.attr('data-xcoord'),
+				y        = $this.attr('data-ycoord'),
+				myLatlng = new google.maps.LatLng( x, y ),
+				image = {
+					url: icon_file,
+					// This marker is 20 pixels wide by 32 pixels tall.
+					size: new google.maps.Size( icon_width, icon_height ),
+					// The origin for this image is 0,0.
+					origin: new google.maps.Point( icon_width, 0 ),
+					// The anchor for this image is the base of the flagpole at 0,32.
+					//anchor: new google.maps.Point( icon_width / 2, icon_height )
+				};
+			hover_marker = new google.maps.Marker({
+				position: myLatlng,
+				map: map,
+				icon: image
+			});
+		}).on('mouseleave', function( e ) {
+			hover_marker.setMap(null);
+		});
 		
 		$('.parent').on('click', function() {
 			
@@ -81,6 +105,10 @@ jQuery(document).ready(function($) {
 		}).children().click(function(e) {
 			return false;
 		});
+
+		if( WUSMMapParams.loc_count == 1 ) {
+			show_location_info( $('#location-list li').children( "a" ).attr('data-page_id') );
+		}
 	}
 
 	if( $('#map-container')[0] ) {

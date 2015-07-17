@@ -95,11 +95,12 @@ class wusm_maps_plugin {
 		$map_center = get_field( 'wusm_map_center' , 'option' );
 
 		$wusm_map_params = array(
-			'icon'   => $map_icon['url'],
-			'width'  => $map_icon['width'],
-			'height' => $map_icon['height'],
-			'lat'    => $map_center['lat'],
-			'lng'    => $map_center['lng']
+			'icon'      => $map_icon['url'],
+			'width'     => $map_icon['width'],
+			'height'    => $map_icon['height'],
+			'lat'       => $map_center['lat'],
+			'lng'       => $map_center['lng'],
+			'loc_count' => substr_count( $atts['ids'], "," ) + 1
 		);
 
 		wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
