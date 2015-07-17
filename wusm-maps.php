@@ -35,7 +35,7 @@ class wusm_maps_plugin {
 	}
 
 	public function register_maps_location_post_type() {
-		if( !defined('WP_LOCAL_INSTALL') ) {
+		if( !WP_DEBUG ) {
 			// Include exported ACF fields
 			require_once( dirname(__FILE__) . '/acf-fields.php' );
 		}
@@ -55,12 +55,13 @@ class wusm_maps_plugin {
 					// Attribute model expects 'attr', 'type' and 'label'
 					// Supported field types: text, checkbox, textarea, radio, select, email, url, number, and date.
 					'attrs' => array(
-						/*array(
-							'label' => 'Trial category',
-							'attr'  => 'category_name',
-							'type'  => 'select',
-							'options' => $category_array,
-						),*/
+						array(
+							'label'    => 'Select Location(s) - If no locations are selected, ALL locations will be shown',
+							'attr'     => 'ids',
+							'type'     => 'post_select',
+							'query'    => array( 'post_type' => 'office-location' ),
+							'multiple' => true,
+						),
 					),
 				)
 			);
@@ -79,9 +80,15 @@ class wusm_maps_plugin {
 		$menu_position = apply_filters('wusm-maps_menu_position',5);
 
 		add_image_size( 'map-img', 220, 220, true );
+
 	}
 
-	function maps_shortcode() {
+	function maps_shortcode( $atts, $content = '' ) {
+		// WP_Query arguments
+		$atts = shortcode_atts( array(
+				'ids' => null,
+		), $atts, 'wusm_map' );
+
 		wp_enqueue_script( 'google-maps', '//maps.googleapis.com/maps/api/js?v=3.exp' );
 		
 		$map_icon = get_field( 'wusm_map_icon' , 'option' );
@@ -109,7 +116,7 @@ class wusm_maps_plugin {
 		$max_height = 600 - ( 36 * ( $count_pages + 1 ) );
 
 		ob_start();
-		
+
 		echo "<div id='map-container'>";
 		echo  "<div id='map-canvas'></div>";
 
@@ -119,6 +126,10 @@ class wusm_maps_plugin {
 			'walker'       => $map_list_walker,
 			'post_type'    => $this->location_post_type
 		);
+
+		if( $atts['ids'] !== null ) {
+			$args['include'] = $atts['ids'];
+		}
 
 		echo  "<ul data-max_height='$max_height' id='location-list'>";
 		//echo  "<li class='title-li'>Find a Location<span id='map-reset'>RESET</span></li>";
