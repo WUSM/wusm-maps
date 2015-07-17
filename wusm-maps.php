@@ -63,36 +63,31 @@ class wusm_maps_plugin {
 
 		add_image_size( 'map-img', 220, 220, true );
 
-		// ACF5 Upgrade!!!
-		/*$query = new WP_Query( $args = array (
-				'post_type' => 'location',
-				'posts_per_page' => -1,
-			)
-		);
+		if( function_exists( 'shortcode_ui_register_for_shortcode' ) ) {
+			shortcode_ui_register_for_shortcode(
+				'wusm_map',
+				array(
+					 // Display label. String. Required.
+					'label' => 'WUSM Map',
 
-		if ( $query->have_posts() ) {
-			while ( $query->have_posts() ) {
-				$query->the_post();
-				$post_id = get_the_id();
-				$curr_meta = get_post_meta($post_id, 'location');
-				$curr_meta_string = $curr_meta[0];
-				if( is_string( $curr_meta_string ) && $curr_meta_string !== "" ) {
-					$curr_meta_exploded = explode("|", $curr_meta_string);
+					 // Icon/image for shortcode. Optional. src or dashicons-$icon. Defaults to carrot.
+					'listItemImage' => 'dashicons-location-alt',
 
-					$address = $curr_meta_exploded[0];
-					$coord = $curr_meta_exploded[1];
-
-					$coord_exploded = explode(",", $coord);
-					$lat = $coord_exploded[0];
-					$lng = $coord_exploded[1];
-					$new_meta = array('address'=>$address, 'lat'=>$lat, 'lng'=>$lng);
-
-					update_post_meta($post_id, 'location', $new_meta);
-				}
-			}
+					// Available shortcode attributes and default values. Required. Array.
+					// Attribute model expects 'attr', 'type' and 'label'
+					// Supported field types: text, checkbox, textarea, radio, select, email, url, number, and date.
+					'attrs' => array(
+						array(
+							'label'    => 'Select Location(s) - If no locations are selected, ALL locations will be shown',
+							'attr'     => 'ids',
+							'type'     => 'post_select',
+							'query'    => array( 'post_type' => 'office-location' ),
+							'multiple' => true,
+						),
+					),
+				)
+			);
 		}
-
-		wp_reset_postdata();*/
 	}
 
 	function maps_shortcode() {
