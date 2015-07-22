@@ -131,9 +131,22 @@ jQuery(document).ready(function($) {
 					if( data.image )
 						content += "<img class='loc-image' src=" + data.image + ">";
 					content += "<div class='loc-div'><h5>" + data.title + "</h5>"
+					if( data.meta.wusm_map_practice_name ) {
+						content += data.meta.wusm_map_practice_name;
+					}
 					if( data.meta.wusm_map_phone ) {
 						content += "<strong>Phone:</strong> " + data.meta.wusm_map_phone;
 					}
+					if( data.meta.wusm_map_fax ) {
+						content += "<strong>Fax:</strong> " + data.meta.wusm_map_fax;
+					}
+					
+					if( single ) {
+						content += data.meta.wusm_map_street_address_1 + "<br>";
+						content += data.meta.wusm_map_street_address_2 + "<br>";
+						content += data.meta.wusm_map_city + ", " + data.meta.wusm_map_state + " " + data.meta.wusm_map_zip_code;
+					}
+
 					//content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
 					//content += "<input type='hidden' name='daddr' value='" + lat + "," + lng + "'>";
 					//content += "<button id='get-directions'>Open in Google Maps</button></form>";
