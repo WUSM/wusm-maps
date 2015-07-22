@@ -127,6 +127,9 @@ jQuery(document).ready(function($) {
 				if( data.type === 'office-location' ) {
 					close_em();
 
+					var lat = parseFloat( data.meta.wusm_map_location.lat );
+					var lng = parseFloat( data.meta.wusm_map_location.lng );
+
 					var content = "<div>";
 					if( data.image )
 						content += "<img class='loc-image' src=" + data.image + ">";
@@ -147,15 +150,12 @@ jQuery(document).ready(function($) {
 						content += data.meta.wusm_map_city + ", " + data.meta.wusm_map_state + " " + data.meta.wusm_map_zip_code;
 					}
 
-					//content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
-					//content += "<input type='hidden' name='daddr' value='" + lat + "," + lng + "'>";
-					//content += "<button id='get-directions'>Open in Google Maps</button></form>";
+					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
+					content += "<input type='hidden' name='daddr' value='" + lat + "," + lng + "'>";
+					content += "<button id='get-directions'><span class='dashicons dashicons-migrate'></span></button></form>";
 					content += "</div>";
 					content += "</div>";
 					
-					var lat = parseFloat( data.meta.wusm_map_location.lat );
-					var lng = parseFloat( data.meta.wusm_map_location.lng );
-
 					var myLatlng = new google.maps.LatLng( lat, lng );
 					if( single ) {
 						var panTo    = new google.maps.LatLng( lat, lng );
