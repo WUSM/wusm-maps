@@ -106,8 +106,8 @@ jQuery(document).ready(function($) {
 			return false;
 		});
 
-		if( WUSMMapParams.loc_count == 1 ) {
-			 $('#location-list').hide();
+		if( $('#location-list').size() == 1 ) {
+			$('#location-list').hide();
 			show_location_info( $('#location-list li').children( "a" ).attr('data-page_id') );
 		}
 	}
