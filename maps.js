@@ -58,7 +58,7 @@ jQuery(document).ready(function($) {
 				});
 
 			google.maps.event.addListener( marker, 'click', function() {
-				show_location_info( id );
+				show_location_info( id, false );
 			});
 
 		}).on('click', function( e ) {
@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 			// We'll pass this variable to the PHP function example_ajax_request
 			var id = $( this ).attr( 'data-page_id' );
 			
-			show_location_info( id );
+			show_location_info( id, false );
 			$('.open-location-box').removeClass();
 			$(this).parent().addClass('open-location-box');
 
@@ -108,7 +108,7 @@ jQuery(document).ready(function($) {
 
 		if( $('#location-list').children().size() == 1 ) {
 			$('#location-list').hide();
-			show_location_info( $('#location-list li').children( "a" ).attr('data-page_id') );
+			show_location_info( $('#location-list li').children( "a" ).attr('data-page_id'), true );
 		}
 	}
 
@@ -116,7 +116,7 @@ jQuery(document).ready(function($) {
 		google.maps.event.addDomListener(window, 'load', initialize);
 	}
 
-	function show_location_info(i) {
+	function show_location_info( i, single ) {
 		
 		// This does the ajax request
 		$.ajax({
@@ -144,7 +144,11 @@ jQuery(document).ready(function($) {
 					var lng = parseFloat( data.meta.wusm_map_location.lng );
 
 					var myLatlng = new google.maps.LatLng( lat, lng );
-					var panTo    = new google.maps.LatLng( lat + 0.003, lng - 0.003);
+					if( single ) {
+						var panTo    = new google.maps.LatLng( lat, lng );
+					} else {
+						var panTo    = new google.maps.LatLng( lat + 0.003, lng - 0.003);
+					}
 
 					var	infowindow = new google.maps.InfoWindow({ content: content, maxWidth: 200 });
 						
