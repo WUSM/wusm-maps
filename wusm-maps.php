@@ -185,7 +185,7 @@ class Map_List_Walker extends Walker_page {
 	}
 
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
-		
+		$classes = Array();
 		$meta = get_post_meta( $page->ID, $this->map_meta_field );
 		
 		$debug =  get_field( $this->map_meta_field, $page->ID );
@@ -201,17 +201,22 @@ class Map_List_Walker extends Walker_page {
 		extract($args, EXTR_SKIP);
 		
 		$count_children = count( get_pages( array( 'post_type' => $this->location_post_type, 'parent' => $page->ID ) ) );
-		$class = ( $count_children > 0 ) ? " class='parent'" : "";
+		
+		if ( $count_children > 0 ) 
+			$classes[] = 'parent';
+		$classes[] = 'location-' . $page->ID;
 
 		$title = apply_filters( 'the_title', $page->post_title, $page->ID );
 
 		$is_map_location = ( isset( $meta ) && ( sizeof( $meta ) > 0 ) );
 
+		$class = " class='" . implode( " ", $classes ) . "'";
+
 		echo  $indent . "<li$class>";
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
 			$link_after .= " (" . $loc_id[0] . ")";
-		if( $is_map_location )
-			echo  '<a data-xcoord="' . $debug['lat'] . '" data-ycoord="' . $debug['lng'] . '" data-page_id="' . $page->ID . '" href="javascript:false;">';
+		if( $is_map_location ) 
+			echo  '<div class="circle"></div><div class="location-details"><a data-xcoord="' . $debug['lat'] . '" data-ycoord="' . $debug['lng'] . '" data-page_id="' . $page->ID . '" href="javascript:false;">';
 		echo  $link_before . $title . $link_after;
 		if( $is_map_location ) {
 			echo  '</a>';
@@ -224,7 +229,7 @@ class Map_List_Walker extends Walker_page {
 			if( get_field( 'wusm_map_zip_code', $page->ID ) ) { echo get_field( 'wusm_map_zip_code', $page->ID ) . "<br>"; }
 			if( get_field( 'wusm_map_phone', $page->ID ) ) { echo "<strong>Phone</strong>: " . get_field( 'wusm_map_phone', $page->ID ) . "<br>"; }
 			if( get_field( 'wusm_map_fax', $page->ID ) ) { echo "<strong>Fax</strong>: " . get_field( 'wusm_map_fax', $page->ID ) . "<br>"; }
-			echo "</p>";
+			echo "</p></div>";
 		}
 	}
 

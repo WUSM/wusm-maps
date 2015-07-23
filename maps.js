@@ -117,7 +117,6 @@ jQuery(document).ready(function($) {
 	}
 
 	function show_location_info( i, single ) {
-		
 		// This does the ajax request
 		$.ajax({
 			type : 'get',
@@ -126,6 +125,7 @@ jQuery(document).ready(function($) {
 				
 				if( data.type === 'office-location' ) {
 					close_em();
+					$('#location-list .location-' + i + ' .circle' ).addClass('filled');
 
 					var lat = parseFloat( data.meta.wusm_map_location.lat );
 					var lng = parseFloat( data.meta.wusm_map_location.lng );
@@ -133,8 +133,13 @@ jQuery(document).ready(function($) {
 					var content = "<div>";
 					if( data.image )
 						content += "<img class='loc-image' src=" + data.image + ">";
-					content += "<div class='loc-div'><h5>" + data.title + "</h5>"
-					if( data.meta.wusm_map_practice_name ) {
+					
+					content += "<div class='loc-div'>"
+					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
+					content += "<input type='hidden' name='daddr' value='" + lat + "," + lng + "'>";
+					content += "<button type='submit' id='get-directions'>" + data.title + "<span class='dashicons dashicons-arrow-right-alt2'></span></button></form>";
+					
+					if( data.meta.wusm_map_practice_name != data.title ) {
 						content += data.meta.wusm_map_practice_name;
 					}
 					if( data.meta.wusm_map_phone ) {
@@ -150,9 +155,6 @@ jQuery(document).ready(function($) {
 						content += data.meta.wusm_map_city + ", " + data.meta.wusm_map_state + " " + data.meta.wusm_map_zip_code;
 					}
 
-					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
-					content += "<input type='hidden' name='daddr' value='" + lat + "," + lng + "'>";
-					content += "<button id='get-directions'><span class='dashicons dashicons-migrate'></span></button></form>";
 					content += "</div>";
 					content += "</div>";
 					
@@ -164,7 +166,9 @@ jQuery(document).ready(function($) {
 					}
 
 					var	infowindow = new google.maps.InfoWindow({ content: content, maxWidth: 200 });
-						
+					
+					google.maps.event.addListener(infowindow,'closeclick', close_em);
+
 					var image = {
 							url: icon_file,
 							// This marker is 20 pixels wide by 32 pixels tall.
@@ -202,6 +206,7 @@ jQuery(document).ready(function($) {
 
 	function close_em() {
 		if(last_marker) {
+			$('.filled').removeClass('filled');
 
 			// close infowindow
 			last_window.close();
