@@ -125,7 +125,8 @@ jQuery(document).ready(function($) {
 				
 				if( data.type === 'office-location' ) {
 					close_em();
-					$('#location-list .location-' + i + ' .circle' ).addClass('filled');
+					$('#location-list .location-' + i ).addClass('selected-location');
+					//$('#location-list .location-' + i + ' .circle' ).addClass('filled');
 
 					var lat = parseFloat( data.meta.wusm_map_location.lat );
 					var lng = parseFloat( data.meta.wusm_map_location.lng );
@@ -207,6 +208,7 @@ jQuery(document).ready(function($) {
 	function close_em() {
 		if(last_marker) {
 			$('.filled').removeClass('filled');
+			$('.selected-location').removeClass('selected-location');
 
 			// close infowindow
 			last_window.close();

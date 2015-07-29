@@ -216,7 +216,8 @@ class Map_List_Walker extends Walker_page {
 		if(isset($loc_id[0]) && ($loc_id[0] != ''))
 			$link_after .= " (" . $loc_id[0] . ")";
 		if( $is_map_location ) 
-			echo  '<div class="circle"></div><div class="location-details"><a data-xcoord="' . $debug['lat'] . '" data-ycoord="' . $debug['lng'] . '" data-page_id="' . $page->ID . '" href="javascript:false;">';
+			//echo '<div class="circle"></div>';
+			echo '<div class="location-details"><a data-xcoord="' . $debug['lat'] . '" data-ycoord="' . $debug['lng'] . '" data-page_id="' . $page->ID . '" href="javascript:false;">';
 		echo  $link_before . $title . $link_after;
 		if( $is_map_location ) {
 			echo  '</a>';
@@ -231,6 +232,7 @@ class Map_List_Walker extends Walker_page {
 			if( get_field( 'wusm_map_fax', $page->ID ) ) { echo "<strong>Fax</strong>: " . get_field( 'wusm_map_fax', $page->ID ) . "<br>"; }
 			echo "</p></div>";
 		}
+		echo "</li><hr>";
 	}
 
 	function start_lvl( &$output, $depth = 0, $args = array() ) {
