@@ -106,9 +106,9 @@ jQuery(document).ready(function($) {
 			return false;
 		});
 
-		if( $('#location-list').children().size() == 1 ) {
+		if( $('#location-list').children('li').size() == 1 ) {
 			$('#location-list').hide();
-			show_location_info( $('#location-list li').children( "a" ).attr('data-page_id'), true );
+			show_location_info( $( '.location-details a' ).attr('data-page_id'), true );
 		}
 	}
 
