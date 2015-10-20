@@ -65,7 +65,7 @@
             {
                 "param": "options_page",
                 "operator": "==",
-                "value": "acf-options-settings"
+                "value": "maps-settings"
             }
         ]
     ],
