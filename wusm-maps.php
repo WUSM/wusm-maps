@@ -16,9 +16,34 @@ class wusm_maps_plugin {
 		add_action( 'MY_AJAX_HANDLER_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
 		add_action( 'MY_AJAX_HANDLER_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
 		add_action( 'init', array( $this, 'register_maps_location_post_type') );
+		
+		// Settings page for the plugin
+		acf_add_options_sub_page(array(
+			'menu'  => 'Maps Settings',
+			'parent' => 'edit.php?post_type=location',
+		));
 
+		// Using JSON to sync fields instead of PHP includes
+		add_filter('acf/settings/load_json', array( $this, 'wusm_bios_load_acf_json' ) );
+
+		add_image_size( 'wusm-bio-thumbnail', 80, 80, array( 'center', 'top' ) );
+		add_image_size( 'wusm-bio-index-card', 145, 210, array( 'center', 'top' ) );
 	}
+ 
+	/**
+	 * Tells ACF where to load local JSON from
+	 * @param  array $paths paths ACF is currently looking
+	 * @return array        paths with our directory added
+	 */
+	function wusm_bios_load_acf_json( $paths ) {
+		// append path
+		$paths[] = plugin_dir_path( __FILE__ ) . 'acf-json';
 
+		// return
+		return $paths;
+		
+	}
+	
 	function register_maps_location_post_type() {
 		$menu_position = apply_filters('wusm-maps_menu_position', 9);
 
