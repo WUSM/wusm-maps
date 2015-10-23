@@ -48,10 +48,10 @@
 
 #location-list li {
 	list-style: none;
-	padding: 10px 20px;
+	padding: 7px 20px;
 	font-weight: bold;
 	margin: 0;
-	line-height: 14px;
+	line-height: 20px;
 }
 
 #location-list li a {
@@ -126,6 +126,7 @@
 	color: #fff;
 	font-size: 12px;
 	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+	font-weight: 600;
 	text-transform: uppercase;
 	text-shadow: 1px 1px 1px #770101;
 	height: 35px;
@@ -161,6 +162,7 @@ img.loc-image {
 	padding-left: 20px;
 	float: left;
 	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+	font-weight: 400;
 }
 
 .loc-div h3 {
@@ -179,7 +181,7 @@ img.loc-image {
 
 .loc-div ul li {
 	margin-bottom: 5px;
-	line-height: 16px;
+	line-height: 20px;
 }
 
 .loc-div p + ul {
@@ -221,7 +223,7 @@ img.loc-image {
 		min-height: 0;
 	}
 	.loc-detail {
-		max-height: 32px;
+		max-height: 40px;
 		overflow: hidden;
 		font-weight: normal;
 	}
