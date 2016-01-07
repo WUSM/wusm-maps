@@ -19,8 +19,8 @@ class wusm_maps_plugin {
 		
 		// Settings page for the plugin
 		acf_add_options_sub_page(array(
-			'menu'  => 'Maps Settings',
-			'parent' => 'edit.php?post_type=location',
+			'menu'   => 'WUSM Maps Settings',
+			'parent' => 'options-general.php',
 		));
 
 		// Using JSON to sync fields instead of PHP includes
