@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 15.05.27.0
+Version:15.10.20.1
 Author URI: 
 */
 
@@ -13,12 +13,34 @@ class wusm_maps_plugin {
 
 	public function __construct() {
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
-		add_action( 'MY_AJAX_HANDLER_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
-		add_action( 'MY_AJAX_HANDLER_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
+		add_action( 'wusm_maps_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
+		add_action( 'wusm_maps_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
 		add_action( 'init', array( $this, 'register_maps_location_post_type') );
+		
+		// Settings page for the plugin
+		acf_add_options_sub_page(array(
+			'menu'  => 'Maps Settings',
+			'parent' => 'edit.php?post_type=location',
+		));
 
+		// Using JSON to sync fields instead of PHP includes
+		add_filter('acf/settings/load_json', array( $this, 'wusm_maps_load_acf_json' ) );
 	}
+ 
+	/**
+	 * Tells ACF where to load local JSON from
+	 * @param  array $paths paths ACF is currently looking
+	 * @return array        paths with our directory added
+	 */
+	function wusm_maps_load_acf_json( $paths ) {
+		// append path
+		$paths[] = plugin_dir_path( __FILE__ ) . 'acf-json';
 
+		// return
+		return $paths;
+		
+	}
+	
 	function register_maps_location_post_type() {
 		$menu_position = apply_filters('wusm-maps_menu_position', 9);
 
