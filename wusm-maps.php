@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:15.10.20.1
+Version:16.01.07.0
 Author URI: 
 */
 
@@ -12,6 +12,12 @@ class wusm_maps_plugin {
 	private $maps_text;
 
 	public function __construct() {
+		// Settings page for the plugin
+		acf_add_options_sub_page(array(
+			'menu'   => 'WUSM Maps Settings',
+			'parent' => 'options-general.php',
+		));
+		
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
 		add_action( 'wusm_maps_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
 		add_action( 'wusm_maps_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
@@ -20,12 +26,6 @@ class wusm_maps_plugin {
 		if( in_array( get_field('wusm_map_post_type', 'option'), array( 'location', null ) ) ) {
 			add_action( 'init', array( $this, 'register_maps_location_post_type') );
 		}
-		
-		// Settings page for the plugin
-		acf_add_options_sub_page(array(
-			'menu'   => 'WUSM Maps Settings',
-			'parent' => 'options-general.php',
-		));
 
 		// Using JSON to sync fields instead of PHP includes
 		add_filter('acf/settings/load_json', array( $this, 'wusm_maps_load_acf_json' ) );
