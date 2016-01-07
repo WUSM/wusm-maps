@@ -15,7 +15,11 @@ class wusm_maps_plugin {
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
 		add_action( 'wusm_maps_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
 		add_action( 'wusm_maps_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
-		add_action( 'init', array( $this, 'register_maps_location_post_type') );
+		
+		// If the "built-in" CPT is selected (or nothing has been selected yet) in the Settings menu
+		if( in_array( get_field('wusm_map_post_type', 'option'), array( 'location', null ) ) ) {
+			add_action( 'init', array( $this, 'register_maps_location_post_type') );
+		}
 		
 		// Settings page for the plugin
 		acf_add_options_sub_page(array(
