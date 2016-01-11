@@ -4,14 +4,17 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:16.01.07.0
+Version:16.01.11.0
 Author URI: 
 */
 
 class wusm_maps_plugin {
 	private $maps_text;
+	private $maps_post_type;
 
 	public function __construct() {
+		$this->maps_post_type = get_field('wusm_map_post_type', 'option');
+
 		// Settings page for the plugin
 		acf_add_options_sub_page(array(
 			'menu'   => 'WUSM Maps Settings',
@@ -23,7 +26,7 @@ class wusm_maps_plugin {
 		add_action( 'wusm_maps_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
 		
 		// If the "built-in" CPT is selected (or nothing has been selected yet) in the Settings menu
-		if( in_array( get_field('wusm_map_post_type', 'option'), array( 'location', null ) ) ) {
+		if( in_array( $this->maps_post_type, array( 'location', null ) ) ) {
 			add_action( 'init', array( $this, 'register_maps_location_post_type') );
 		}
 
@@ -107,7 +110,7 @@ class wusm_maps_plugin {
 							'label'    => 'Select Location(s) - If no locations are selected, ALL locations will be shown',
 							'attr'     => 'ids',
 							'type'     => 'post_select',
-							'query'    => array( 'post_type' => 'office-location' ),
+							'query'    => array( 'post_type' => $this->maps_post_type ),
 							'multiple' => true,
 						),
 					),
@@ -124,7 +127,7 @@ class wusm_maps_plugin {
 
 		$map_list_walker = new Map_List_Walker();
 
-		$count_pages = count( get_pages( array( 'post_type' => 'location', 'parent' => 0 ) ) );
+		$count_pages = count( get_pages( array( 'post_type' => $this->maps_post_type, 'parent' => 0 ) ) );
 		// Total height is 600px, each entry is 36px
 		// We have to add one for the "Finad a Location" header
 		$max_height = 600 - ( 36 * ( $count_pages + 1 ) );
@@ -135,7 +138,7 @@ class wusm_maps_plugin {
 			'title_li'     => false,
 			'echo'         => 0,
 			'walker'       => $map_list_walker,
-			'post_type'    => 'location'
+			'post_type'    => $this->maps_post_type
 		);
 
 		$output .= "<ul data-max_height='$max_height' id='location-list'>";
@@ -187,9 +190,9 @@ new wusm_maps_plugin();
 class Map_List_Walker extends Walker_page {
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
 		
-		$meta = get_post_meta( $page->ID, 'location' );
+		$meta = get_post_meta( $page->ID, 'wusm_map_location' );
 		
-		$coord_fields =  get_field('location', $page->ID);
+		$coord_fields =  get_field( 'wusm_map_location', $page->ID);
 		if( isset($coord_fields['coordinates']) ) {
 			$coord = explode(',', $coord_fields['coordinates']);
 		} elseif( isset($coord_fields['lat']) && isset($coord_fields['lng']) ) {
