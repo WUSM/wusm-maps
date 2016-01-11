@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
 	var map, max_height = 528,	// 600-(36*2)
 		last_marker = false,
 		last_window = false,
-		latlng = new google.maps.LatLng(38.635,-90.258);
+		latlng = new google.maps.LatLng( maps_vars.center.lat, maps_vars.center.lng );
 	function initialize() {
 		
 		var mapOptions = {
@@ -36,12 +36,17 @@ jQuery(document).ready(function($) {
 		$('#location-list .child').first().show().addClass( "expanded" );
 
 		$('#location-list li a').each(function(index) {
-			// We'll pass this variable to the PHP function example_ajax_request
+			
+			if( maps_vars.icon != '' ) {
+				image = maps_vars.icon.url;
+			} else {
+				image = '/wp-content/plugins/wusm-maps/map_marker_closed.png';
+			}
+
 			var id = $(this).attr('data-page_id'),
 				x = $(this).attr('data-xcoord'),
 				y = $(this).attr('data-ycoord'),
 				myLatlng = new google.maps.LatLng( x, y ),
-				image = '/wp-content/plugins/wusm-maps/map_marker_closed.png',
 				marker = new google.maps.Marker({
 					position: myLatlng,
 					map: map,
@@ -75,7 +80,7 @@ jQuery(document).ready(function($) {
 		google.maps.event.addDomListener(window, 'load', initialize);
 	}
 
-	function show_location_info(i) {
+	function show_location_info( i ) {
 		// This does the ajax request
 		$.ajax({
 			type : 'post',
@@ -87,6 +92,8 @@ jQuery(document).ready(function($) {
 			success:function(data) {
 				if( data !== '-1' ) {
 					close_em();
+
+					console.log(data);
 					
 					var location_obj = jQuery.parseJSON( data ),
 						content = '',
@@ -107,12 +114,20 @@ jQuery(document).ready(function($) {
 						offset_lang;
 
 					if ($(window).width() > 960) {
-						offset_lat = 0.003, offset_lang = 0.0028;
+						offset_lat = 0.003, offset_lang = -0.0028;
 					} else if ($(window).width() > 700) {
 						offset_lat = 0.006, offset_lang = 0.005;
 					} else {
 						offset_lat = 0.006, offset_lang = 0;
 					}
+
+					if( maps_vars.icon_open != '' ) {
+						image = maps_vars.icon_open.url;
+					} else {
+						image = '/wp-content/plugins/wusm-maps/map_marker_open.png';
+					}
+
+					console.log(coords_array);
 
 					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
 						panTo = new google.maps.LatLng( parseFloat(coords_array[0]) + offset_lat, parseFloat(coords_array[1]) + offset_lang),
@@ -121,7 +136,6 @@ jQuery(document).ready(function($) {
 							disableAutoPan: true,
 							maxWidth: 515
 						}),
-						image = '/wp-content/plugins/wusm-maps/map_marker_open.png',
 						marker = new google.maps.Marker({
 							position: myLatlng,
 							map: map,

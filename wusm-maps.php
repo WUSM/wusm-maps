@@ -120,8 +120,18 @@ class wusm_maps_plugin {
 	}
 
 	function maps_shortcode() {
+		$wusm_maps_js_vars = array(
+			'center'    => get_field( 'wusm_map_center', 'option' ),
+			'icon'      => get_field( 'wusm_map_icon', 'option' ),
+			'icon_open' => get_field( 'wusm_map_icon_open', 'option' ),
+		);
+
 		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
-		wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
+		
+		wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . "/maps.js" );
+		wp_enqueue_script( 'maps-js' );
+		wp_localize_script( 'maps-js', 'maps_vars', $wusm_maps_js_vars );
+
 		wp_register_style( 'maps-styles', plugins_url('maps.css', __FILE__) );
 		wp_enqueue_style( 'maps-styles' );
 
@@ -154,7 +164,7 @@ class wusm_maps_plugin {
 		$loc_id = $_POST['id'];
 		$loc_post = get_post($loc_id);
 		
-		$coord_fields = get_field('location', $loc_id);
+		$coord_fields = get_field('wusm_map_location', $loc_id);
 
 		if( isset( $coord_fields['coordinates'] ) ) {
 			$coord = $coord_fields['coordinates'];
@@ -185,7 +195,7 @@ class wusm_maps_plugin {
 	}
 
 }
-new wusm_maps_plugin();
+$wusm_maps = new wusm_maps_plugin();
 
 class Map_List_Walker extends Walker_page {
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
