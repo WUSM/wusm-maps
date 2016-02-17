@@ -3,10 +3,10 @@
     "title": "WUSM Maps Settings",
     "fields": [
         {
-            "key": "field_551b1665763ce",
-            "label": "Map post type",
-            "name": "wusm_map_post_type",
-            "type": "post_types",
+            "key": "field_551c0b7d08c65",
+            "label": "Map icon (Closed)",
+            "name": "wusm_map_icon",
+            "type": "image",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -15,12 +15,21 @@
                 "class": "",
                 "id": ""
             },
-            "post_type": "post"
+            "return_format": "array",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
         },
         {
-            "key": "field_551c0b7d08c65",
-            "label": "Map icon",
-            "name": "wusm_map_icon",
+            "key": "field_569427bb323c6",
+            "label": "Map icon (Open)",
+            "name": "wusm_map_icon_open",
             "type": "image",
             "instructions": "",
             "required": 0,
@@ -65,7 +74,7 @@
             {
                 "param": "options_page",
                 "operator": "==",
-                "value": "maps-settings"
+                "value": "acf-options-wusm-maps-settings"
             }
         ]
     ],
@@ -77,5 +86,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1445368908
+    "modified": 1452550125
 }
