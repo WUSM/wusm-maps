@@ -1,5 +1,5 @@
 wusm-maps
 =========
-Version:16.01.22.1
+Version:16.02.17.1
 
 Plugin to add Google Maps to a WUSM site via shortcode and CPTs

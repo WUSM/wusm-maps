@@ -4,16 +4,14 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:16.01.22.1
+Version:16.02.17.1
 Author URI: 
 */
 
 class wusm_maps_plugin {
 	private $maps_text;
-	private $maps_post_type;
 
 	public function __construct() {
-		$this->maps_post_type = get_field('wusm_map_post_type', 'option');
 
 		// Settings page for the plugin
 		acf_add_options_sub_page(array(
@@ -25,11 +23,8 @@ class wusm_maps_plugin {
 		add_action( 'wusm_maps_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
 		add_action( 'wusm_maps_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
 		
-		// If the "built-in" CPT is selected (or nothing has been selected yet) in the Settings menu
-		if( in_array( $this->maps_post_type, array( 'location', null ) ) ) {
-			add_action( 'init', array( $this, 'register_maps_location_post_type') );
-		}
-
+		add_action( 'init', array( $this, 'register_maps_location_post_type') );
+		
 		// Using JSON to sync fields instead of PHP includes
 		add_filter('acf/settings/load_json', array( $this, 'wusm_maps_load_acf_json' ) );
 
@@ -44,14 +39,20 @@ class wusm_maps_plugin {
 			'icon_open' => get_field( 'wusm_map_icon_open', 'option' ),
 		);
 
-		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
-		
-		wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . "/maps.js" );
-		wp_enqueue_script( 'maps-js' );
-		wp_localize_script( 'maps-js', 'maps_vars', $wusm_maps_js_vars );
+		if ( $wusm_maps_js_vars[ 'center' ] != null &&
+			$wusm_maps_js_vars[ 'icon' ] != null &&
+			$wusm_maps_js_vars[ 'icon_open' ] != null ) {
 
-		wp_register_style( 'maps-styles', plugins_url('maps.css', __FILE__) );
-		wp_enqueue_style( 'maps-styles' );
+			wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
+			
+			wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . "/maps.js" );
+			wp_enqueue_script( 'maps-js' );
+			wp_localize_script( 'maps-js', 'maps_vars', $wusm_maps_js_vars );
+
+			wp_register_style( 'maps-styles', plugins_url('maps.css', __FILE__) );
+			wp_enqueue_style( 'maps-styles' );
+
+		}
 
 	}
  
@@ -131,7 +132,7 @@ class wusm_maps_plugin {
 							'label'    => 'Select Location(s) - If no locations are selected, ALL locations will be shown',
 							'attr'     => 'ids',
 							'type'     => 'post_select',
-							'query'    => array( 'post_type' => $this->maps_post_type ),
+							'query'    => array( 'post_type' => 'location' ),
 							'multiple' => true,
 						),
 					),
@@ -144,7 +145,7 @@ class wusm_maps_plugin {
 		
 		$map_list_walker = new Map_List_Walker();
 
-		$count_pages = count( get_pages( array( 'post_type' => $this->maps_post_type, 'parent' => 0 ) ) );
+		$count_pages = count( get_pages( array( 'post_type' => 'location', 'parent' => 0 ) ) );
 		// Total height is 600px, each entry is 36px
 		// We have to add one for the "Finad a Location" header
 		$max_height = 600 - ( 36 * ( $count_pages + 1 ) );
@@ -155,7 +156,7 @@ class wusm_maps_plugin {
 			'title_li'     => false,
 			'echo'         => 0,
 			'walker'       => $map_list_walker,
-			'post_type'    => $this->maps_post_type
+			'post_type'    => 'location'
 		);
 
 		$output .= "<ul data-max_height='$max_height' id='location-list'>";

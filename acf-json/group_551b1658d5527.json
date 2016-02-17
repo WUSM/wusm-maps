@@ -3,21 +3,6 @@
     "title": "WUSM Maps Settings",
     "fields": [
         {
-            "key": "field_551b1665763ce",
-            "label": "Map post type",
-            "name": "wusm_map_post_type",
-            "type": "post_types",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "post_type": "post"
-        },
-        {
             "key": "field_551c0b7d08c65",
             "label": "Map icon (Closed)",
             "name": "wusm_map_icon",
