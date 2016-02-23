@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI: 
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version: 15.05.27.0
+Version:16.02.17.1
 Author URI: 
 */
 
@@ -12,13 +12,64 @@ class wusm_maps_plugin {
 	private $maps_text;
 
 	public function __construct() {
+
+		// Settings page for the plugin
+		acf_add_options_sub_page(array(
+			'menu'   => 'WUSM Maps Settings',
+			'parent' => 'options-general.php',
+		));
+		
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
-		add_action( 'MY_AJAX_HANDLER_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
-		add_action( 'MY_AJAX_HANDLER_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
+		add_action( 'wusm_maps_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
+		add_action( 'wusm_maps_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
+		
 		add_action( 'init', array( $this, 'register_maps_location_post_type') );
+		
+		// Using JSON to sync fields instead of PHP includes
+		add_filter('acf/settings/load_json', array( $this, 'wusm_maps_load_acf_json' ) );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'wusm_maps_enqueue_scripts_and_styles' ) );
 
 	}
 
+	function wusm_maps_enqueue_scripts_and_styles() {
+		$wusm_maps_js_vars = array(
+			'center'    => get_field( 'wusm_map_center', 'option' ),
+			'icon'      => get_field( 'wusm_map_icon', 'option' ),
+			'icon_open' => get_field( 'wusm_map_icon_open', 'option' ),
+		);
+
+		if ( $wusm_maps_js_vars[ 'center' ] != null &&
+			$wusm_maps_js_vars[ 'icon' ] != null &&
+			$wusm_maps_js_vars[ 'icon_open' ] != null ) {
+
+			wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
+			
+			wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . "/maps.js" );
+			wp_enqueue_script( 'maps-js' );
+			wp_localize_script( 'maps-js', 'maps_vars', $wusm_maps_js_vars );
+
+			wp_register_style( 'maps-styles', plugins_url('maps.css', __FILE__) );
+			wp_enqueue_style( 'maps-styles' );
+
+		}
+
+	}
+ 
+	/**
+	 * Tells ACF where to load local JSON from
+	 * @param  array $paths paths ACF is currently looking
+	 * @return array        paths with our directory added
+	 */
+	function wusm_maps_load_acf_json( $paths ) {
+		// append path
+		$paths[] = plugin_dir_path( __FILE__ ) . 'acf-json';
+
+		// return
+		return $paths;
+		
+	}
+	
 	function register_maps_location_post_type() {
 		$menu_position = apply_filters('wusm-maps_menu_position', 9);
 
@@ -63,44 +114,35 @@ class wusm_maps_plugin {
 
 		add_image_size( 'map-img', 220, 220, true );
 
-		// ACF5 Upgrade!!!
-		/*$query = new WP_Query( $args = array (
-				'post_type' => 'location',
-				'posts_per_page' => -1,
-			)
-		);
+		if( function_exists( 'shortcode_ui_register_for_shortcode' ) ) {
+			shortcode_ui_register_for_shortcode(
+				'wusm_map',
+				array(
+					 // Display label. String. Required.
+					'label' => 'WUSM Map',
 
-		if ( $query->have_posts() ) {
-			while ( $query->have_posts() ) {
-				$query->the_post();
-				$post_id = get_the_id();
-				$curr_meta = get_post_meta($post_id, 'location');
-				$curr_meta_string = $curr_meta[0];
-				if( is_string( $curr_meta_string ) && $curr_meta_string !== "" ) {
-					$curr_meta_exploded = explode("|", $curr_meta_string);
+					 // Icon/image for shortcode. Optional. src or dashicons-$icon. Defaults to carrot.
+					'listItemImage' => 'dashicons-location-alt',
 
-					$address = $curr_meta_exploded[0];
-					$coord = $curr_meta_exploded[1];
-
-					$coord_exploded = explode(",", $coord);
-					$lat = $coord_exploded[0];
-					$lng = $coord_exploded[1];
-					$new_meta = array('address'=>$address, 'lat'=>$lat, 'lng'=>$lng);
-
-					update_post_meta($post_id, 'location', $new_meta);
-				}
-			}
+					// Available shortcode attributes and default values. Required. Array.
+					// Attribute model expects 'attr', 'type' and 'label'
+					// Supported field types: text, checkbox, textarea, radio, select, email, url, number, and date.
+					'attrs' => array(
+						array(
+							'label'    => 'Select Location(s) - If no locations are selected, ALL locations will be shown',
+							'attr'     => 'ids',
+							'type'     => 'post_select',
+							'query'    => array( 'post_type' => 'location' ),
+							'multiple' => true,
+						),
+					),
+				)
+			);
 		}
-
-		wp_reset_postdata();*/
 	}
 
 	function maps_shortcode() {
-		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
-		wp_enqueue_script( 'maps-js', plugins_url('maps.js', __FILE__) );
-		wp_register_style( 'maps-styles', plugins_url('maps.css', __FILE__) );
-		wp_enqueue_style( 'maps-styles' );
-
+		
 		$map_list_walker = new Map_List_Walker();
 
 		$count_pages = count( get_pages( array( 'post_type' => 'location', 'parent' => 0 ) ) );
@@ -130,7 +172,7 @@ class wusm_maps_plugin {
 		$loc_id = $_POST['id'];
 		$loc_post = get_post($loc_id);
 		
-		$coord_fields = get_field('location', $loc_id);
+		$coord_fields = get_field('wusm_map_location', $loc_id);
 
 		if( isset( $coord_fields['coordinates'] ) ) {
 			$coord = $coord_fields['coordinates'];
@@ -161,14 +203,14 @@ class wusm_maps_plugin {
 	}
 
 }
-new wusm_maps_plugin();
+$wusm_maps = new wusm_maps_plugin();
 
 class Map_List_Walker extends Walker_page {
 	function start_el(&$output, $page, $depth = 0, $args = Array(), $current_page = 0) {
 		
-		$meta = get_post_meta( $page->ID, 'location' );
+		$meta = get_post_meta( $page->ID, 'wusm_map_location' );
 		
-		$coord_fields =  get_field('location', $page->ID);
+		$coord_fields =  get_field( 'wusm_map_location', $page->ID);
 		if( isset($coord_fields['coordinates']) ) {
 			$coord = explode(',', $coord_fields['coordinates']);
 		} elseif( isset($coord_fields['lat']) && isset($coord_fields['lng']) ) {

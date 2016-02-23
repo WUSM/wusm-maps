@@ -27,9 +27,9 @@ $allowed_actions = array(
 
 if( in_array( $action, $allowed_actions ) ){
 	if( is_user_logged_in() )
-		do_action('MY_AJAX_HANDLER_'.$action);
+		do_action('wusm_maps_ajax_'.$action);
 	else
-		do_action('MY_AJAX_HANDLER_nopriv_'.$action);
+		do_action('wusm_maps_ajax_nopriv_'.$action);
 }
 else{
 	die('-1');
