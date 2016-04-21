@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
 						offset_lang;
 
 					if ($(window).width() > 960) {
-						offset_lat = 0.003, offset_lang = -0.0028;
+						offset_lat = 0.003, offset_lang = 0.0028;
 					} else if ($(window).width() > 700) {
 						offset_lat = 0.006, offset_lang = 0.005;
 					} else {
