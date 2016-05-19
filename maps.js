@@ -83,11 +83,7 @@ jQuery(document).ready(function($) {
 	function show_location_info( i ) {
 		// This does the ajax request
 		$.ajax({
-			url: wpApiSettings.root + 'wp/v2/location/' + i,
-			method: 'POST',
-			beforeSend: function ( xhr ) {
-				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-			},
+			url: '/wp-json/wp/v2/location/' + i,
 			success:function(data) {
 				if( data !== '-1' ) {
 					close_em();
