@@ -83,29 +83,26 @@ jQuery(document).ready(function($) {
 	function show_location_info( i ) {
 		// This does the ajax request
 		$.ajax({
-			type : 'post',
-			url: '/wp-content/plugins/wusm-maps/locations.php',
-			data: {
-				action   : 'show_location',
-				id       : i
+			url: wpApiSettings.root + 'wp/v2/location/' + i,
+			method: 'POST',
+			beforeSend: function ( xhr ) {
+				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 			},
 			success:function(data) {
 				if( data !== '-1' ) {
 					close_em();
 
-					console.log(data);
-					
-					var location_obj = jQuery.parseJSON( data ),
-						content = '',
-						coords_array = location_obj.coords.split(',');
+					var content = '',
+						lat = data.location.lat;
+						lng = data.location.lng;
 
 					content += "<div class='location-info'>";
 					if ($(window).width() > 700)
-						if( location_obj.image )
-							content += "<img class='loc-image' src=" + location_obj.image + ">";
-					content += "<div class='loc-div'><h3>" + location_obj.title + "</h3><div class='loc-detail'>" + location_obj.content + "</div>";
+						if( data.image )
+							content += "<img class='loc-image' src=" + data.image + ">";
+					content += "<div class='loc-div'><h3>" + data.title.rendered + "</h3><div class='loc-detail'>" + data.content.rendered + "</div>";
 					content += "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
-					content += "<input type='hidden' name='daddr' value='" + coords_array[0] + "," + coords_array[1] + "'>";
+					content += "<input type='hidden' name='daddr' value='" + lat + "," + lng + "'>";
 					content += "<button id='get-directions'>Open in Google Maps</button></form>";
 					content += "</div>";
 					content += "</div>";
@@ -127,10 +124,8 @@ jQuery(document).ready(function($) {
 						image = '/wp-content/plugins/wusm-maps/map_marker_open.png';
 					}
 
-					console.log(coords_array);
-
-					var	myLatlng = new google.maps.LatLng( parseFloat(coords_array[0]), parseFloat(coords_array[1]) ),
-						panTo = new google.maps.LatLng( parseFloat(coords_array[0]) + offset_lat, parseFloat(coords_array[1]) + offset_lang),
+					var	myLatlng = new google.maps.LatLng( parseFloat(lat), parseFloat(lng) ),
+						panTo = new google.maps.LatLng( parseFloat(lat) + offset_lat, parseFloat(lng) + offset_lang),
 						infowindow = new google.maps.InfoWindow({
 							content: content,
 							disableAutoPan: true,
@@ -139,7 +134,7 @@ jQuery(document).ready(function($) {
 						marker = new google.maps.Marker({
 							position: myLatlng,
 							map: map,
-							title: location_obj.title,
+							title: data.slug,
 							icon: image
 						});
 

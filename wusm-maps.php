@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI:
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:16.02.17.1
+Version:2016.05.19.0
 Author URI:
 */
 
@@ -13,23 +13,86 @@ class wusm_maps_plugin {
 
 	public function __construct() {
 
+		if ( file_exists( plugin_dir_path( __FILE__ ) . 'locations.php' ) ) {
+			unlink(plugin_dir_path( __FILE__ ) . 'locations.php');
+		}
+
 		// Settings page for the plugin
 		acf_add_options_sub_page(array(
-			'menu'   => 'WUSM Maps Settings',
-			'parent' => 'options-general.php',
+			'menu'   => 'Maps Settings',
+			'parent' => 'edit.php?post_type=location',
 		));
 
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
-		add_action( 'wusm_maps_ajax_show_location', array( $this, 'get_location_window' ) ); // ajax for logged in users
-		add_action( 'wusm_maps_ajax_nopriv_show_location', array( $this, 'get_location_window' ) ); // ajax for not logged in users
-
+		
 		add_action( 'init', array( $this, 'register_maps_location_post_type' ) );
+		add_action( 'rest_api_init', array( $this, 'location_register_coords' ) );
 
 		// Using JSON to sync fields instead of PHP includes
 		add_filter( 'acf/settings/load_json', array( $this, 'wusm_maps_load_acf_json' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'wusm_maps_enqueue_scripts_and_styles' ) );
 
+	}
+
+	function location_register_coords() {
+		register_rest_field( 'location',
+			'location',
+			array(
+				'get_callback'    => array( $this, 'location_get_coords' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+
+		register_rest_field( 'location',
+			'image',
+			array(
+				'get_callback'    => array( $this, 'location_get_image' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+/**
+	 * get the value of the "coords" field
+	 *
+	 * @param array $object details of current post.
+	 * @param string $field_name name of field.
+	 * @param wp_rest_request $request current request
+	 *
+	 * @return mixed
+	 */
+	function location_get_image( $object, $field_name, $request ) {
+		
+		$img_id = get_post_meta( $object[ 'id' ], 'location_image', true );
+		$size = 'map-img'; // (thumbnail, medium, large, full or custom size)
+		$image = wp_get_attachment_image_src( $img_id, $size );
+		$img = $image[0];
+		
+		return $img;
+	}
+
+	/**
+	 * get the value of the "coords" field
+	 *
+	 * @param array $object details of current post.
+	 * @param string $field_name name of field.
+	 * @param wp_rest_request $request current request
+	 *
+	 * @return mixed
+	 */
+	function location_get_coords( $object, $field_name, $request ) {
+		$location = get_post_meta( $object[ 'id' ], 'location', true );
+
+		if( $location == null ) {
+
+			$location = get_post_meta( $object[ 'id' ], 'wusm_map_location', true );
+
+		}
+
+		return $location;
 	}
 
 	function wusm_maps_enqueue_scripts_and_styles() {
@@ -50,6 +113,8 @@ class wusm_maps_plugin {
 
 		wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . '/maps.js' );
 		wp_enqueue_script( 'maps-js' );
+
+		wp_localize_script( 'maps-js', 'wpApiSettings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
 		wp_localize_script( 'maps-js', 'maps_vars', $wusm_maps_js_vars );
 
 		wp_register_style( 'maps-styles', plugins_url( 'maps.css', __FILE__ ) );
@@ -103,6 +168,7 @@ class wusm_maps_plugin {
 			'has_archive' => false,
 			'hierarchical' => true,
 			'menu_position' => $menu_position,
+			'show_in_rest' => true,
 			'supports' => array(
 				'title',
 				'editor',
@@ -168,40 +234,6 @@ class wusm_maps_plugin {
 		$output .= '</div>';
 
 		return $output;
-	}
-
-	function get_location_window() {
-		$loc_id = $_POST['id'];
-		$loc_post = get_post( $loc_id );
-
-		$coord_fields = get_field( 'wusm_map_location', $loc_id );
-
-		if ( isset( $coord_fields['coordinates'] ) ) {
-			$coord = $coord_fields['coordinates'];
-		} elseif ( isset( $coord_fields['lat'] ) && isset( $coord_fields['lng'] ) ) {
-			$coord = implode( ',', array( $coord_fields['lat'], $coord_fields['lng'] ) );
-		} else {
-			$coord = '38.6354379, -90.2644422';
-		}
-
-		$img_id = get_field( 'location_image', $loc_id );
-		$size = 'map-img'; // (thumbnail, medium, large, full or custom size)
-		$image = wp_get_attachment_image_src( $img_id, $size );
-		$img = $image[0];
-
-		$content = wpautop( $loc_post->post_content );
-
-		$location_array = array(
-			'address' => $coord_fields['address'],
-			'coords'  => $coord,
-			'image'   => $img,
-			'title'   => $loc_post->post_title,
-			'content' => $content,
-		);
-
-		echo json_encode( $location_array );
-
-		die(); // stop executing script
 	}
 }
 $wusm_maps = new wusm_maps_plugin();
