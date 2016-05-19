@@ -74,7 +74,7 @@
             {
                 "param": "options_page",
                 "operator": "==",
-                "value": "acf-options-wusm-maps-settings"
+                "value": "acf-options-maps-settings"
             }
         ]
     ],
