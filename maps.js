@@ -18,6 +18,7 @@ jQuery(document).ready(function($) {
 		last_marker = false,
 		last_window = false,
 		latlng = new google.maps.LatLng( maps_vars.center.lat, maps_vars.center.lng );
+	
 	function initialize() {
 		
 		var mapOptions = {
