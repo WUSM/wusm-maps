@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI:
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:2016.05.19.2
+Version:2016.07.13.0
 Author URI:
 */
 
@@ -13,8 +13,8 @@ class wusm_maps_plugin {
 
 	public function __construct() {
 
-		if ( file_exists( plugin_dir_path( __FILE__ ) . 'locations.php' ) ) {
-			unlink(plugin_dir_path( __FILE__ ) . 'locations.php');
+		if ( file_exists( plugin_dir_path( __FILE__ ) . 'acf-json/group_acf_locations.json' ) ) {
+			unlink( plugin_dir_path( __FILE__ ) . 'acf-json/group_acf_locations.json' );
 		}
 
 		// Settings page for the plugin
@@ -24,7 +24,7 @@ class wusm_maps_plugin {
 		));
 
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
-		
+
 		add_action( 'init', array( $this, 'register_maps_location_post_type' ) );
 		add_action( 'rest_api_init', array( $this, 'location_register_coords' ) );
 
@@ -55,40 +55,40 @@ class wusm_maps_plugin {
 		);
 	}
 
-/**
+	/**
 	 * get the value of the "coords" field
 	 *
-	 * @param array $object details of current post.
-	 * @param string $field_name name of field.
+	 * @param array           $object details of current post.
+	 * @param string          $field_name name of field.
 	 * @param wp_rest_request $request current request
 	 *
 	 * @return mixed
 	 */
 	function location_get_image( $object, $field_name, $request ) {
-		
-		$img_id = get_post_meta( $object[ 'id' ], 'location_image', true );
+
+		$img_id = get_post_meta( $object['id'], 'location_image', true );
 		$size = 'map-img'; // (thumbnail, medium, large, full or custom size)
 		$image = wp_get_attachment_image_src( $img_id, $size );
 		$img = $image[0];
-		
+
 		return $img;
 	}
 
 	/**
 	 * get the value of the "coords" field
 	 *
-	 * @param array $object details of current post.
-	 * @param string $field_name name of field.
+	 * @param array           $object details of current post.
+	 * @param string          $field_name name of field.
 	 * @param wp_rest_request $request current request
 	 *
 	 * @return mixed
 	 */
 	function location_get_coords( $object, $field_name, $request ) {
-		$location = get_post_meta( $object[ 'id' ], 'location', true );
+		$location = get_post_meta( $object['id'], 'location', true );
 
-		if( $location == null ) {
+		if ( $location == null ) {
 
-			$location = get_post_meta( $object[ 'id' ], 'wusm_map_location', true );
+			$location = get_post_meta( $object['id'], 'wusm_map_location', true );
 
 		}
 
