@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI:
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:2016.07.13.1
+Version:2016.08.23.0
 Author URI:
 */
 
@@ -158,8 +158,12 @@ class wusm_maps_plugin {
 			);
 		}
 
-		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY&sensor=false' );
-		
+		if ( strpos( site_url(), 'wustl.edu' ) ) {
+			wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY&sensor=false' );
+		} else {
+			wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?sensor=false' );
+		}
+
 		wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . 'maps.js' );
 		wp_enqueue_script( 'maps-js' );
 
@@ -257,7 +261,13 @@ class wusm_maps_plugin {
 		}
 	}
 
-	function maps_shortcode() {
+	function maps_shortcode( $atts ) {
+		$default_atts = array(
+			// Locations to display
+			'ids'     => false,
+		);
+
+		$atts = shortcode_atts( $default_atts, $atts, 'wusm_map' );
 
 		$map_list_walker = new Map_List_Walker();
 
@@ -268,12 +278,17 @@ class wusm_maps_plugin {
 
 		$output = "<div id='map-container'>";
 		$output .= "<div id='map-canvas'></div>";
+		
 		$args = array(
 			'title_li'     => false,
 			'echo'         => 0,
 			'walker'       => $map_list_walker,
 			'post_type'    => 'location',
 		);
+
+		if ( $atts[ 'ids' ] ) {
+			$args[ 'include' ] = $atts[ 'ids' ];
+		}
 
 		$output .= "<ul data-max_height='$max_height' id='location-list'>";
 		$output .= "<li class='title-li'>Find a Location<span id='map-reset'>RESET</span></li>";
