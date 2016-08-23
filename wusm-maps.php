@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI:
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:2016.05.19.1
+Version:2016.07.13.1
 Author URI:
 */
 
@@ -13,8 +13,10 @@ class wusm_maps_plugin {
 
 	public function __construct() {
 
-		if ( file_exists( plugin_dir_path( __FILE__ ) . 'locations.php' ) ) {
-			unlink(plugin_dir_path( __FILE__ ) . 'locations.php');
+		add_action( 'admin_init', array( $this, 'wusm_maps_helper_admin_init' ) );
+
+		if ( file_exists( plugin_dir_path( __FILE__ ) . 'acf-json/group_acf_locations.json' ) ) {
+			unlink( plugin_dir_path( __FILE__ ) . 'acf-json/group_acf_locations.json' );
 		}
 
 		// Settings page for the plugin
@@ -24,7 +26,7 @@ class wusm_maps_plugin {
 		));
 
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
-		
+
 		add_action( 'init', array( $this, 'register_maps_location_post_type' ) );
 		add_action( 'rest_api_init', array( $this, 'location_register_coords' ) );
 
@@ -32,6 +34,21 @@ class wusm_maps_plugin {
 		add_filter( 'acf/settings/load_json', array( $this, 'wusm_maps_load_acf_json' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'wusm_maps_enqueue_scripts_and_styles' ) );
+
+	}
+
+	/**
+	 * All the admin things
+	 *
+	 * @since  2016.06.01.0
+	 */
+	public function wusm_maps_helper_admin_init() {	
+	
+		// Register the TinyMCE JS that adds the button
+		add_filter( 'mce_external_plugins', array( $this, 'wusm_maps_add_buttons' ) );
+
+		// Actually insert the button registered above to TinyMCE
+		add_filter( 'mce_buttons', array( $this, 'wusm_maps_register_buttons' ) );
 
 	}
 
@@ -55,45 +72,77 @@ class wusm_maps_plugin {
 		);
 	}
 
-/**
+	/**
 	 * get the value of the "coords" field
 	 *
-	 * @param array $object details of current post.
-	 * @param string $field_name name of field.
+	 * @param array           $object details of current post.
+	 * @param string          $field_name name of field.
 	 * @param wp_rest_request $request current request
 	 *
 	 * @return mixed
 	 */
 	function location_get_image( $object, $field_name, $request ) {
-		
-		$img_id = get_post_meta( $object[ 'id' ], 'location_image', true );
+
+		$img_id = get_post_meta( $object['id'], 'location_image', true );
 		$size = 'map-img'; // (thumbnail, medium, large, full or custom size)
 		$image = wp_get_attachment_image_src( $img_id, $size );
 		$img = $image[0];
-		
+
 		return $img;
 	}
 
 	/**
 	 * get the value of the "coords" field
 	 *
-	 * @param array $object details of current post.
-	 * @param string $field_name name of field.
+	 * @param array           $object details of current post.
+	 * @param string          $field_name name of field.
 	 * @param wp_rest_request $request current request
 	 *
 	 * @return mixed
 	 */
 	function location_get_coords( $object, $field_name, $request ) {
-		$location = get_post_meta( $object[ 'id' ], 'location', true );
+		$location = get_post_meta( $object['id'], 'location', true );
 
-		if( $location == null ) {
+		if ( $location == null ) {
 
-			$location = get_post_meta( $object[ 'id' ], 'wusm_map_location', true );
+			$location = get_post_meta( $object['id'], 'wusm_map_location', true );
 
 		}
 
 		return $location;
 	}
+
+	/**
+	 * Adds the functionality to the WUSM maps button to TinyMCE
+	 *
+	 * @param  array $plugin_array array of TinyMCE plugins
+	 * @return array               array with our plugin added to it
+	 */
+	public function wusm_maps_add_buttons( $plugin_array ) {
+
+		// http://codex.wordpress.org/TinyMCE
+		$plugin_array['wusm_maps_mce_button'] = plugins_url( 'js/wusm-maps-tinymce.js', __FILE__ );
+		return $plugin_array;
+
+	}
+
+	/**
+	 * Add the actual button to TinyMCE
+	 *
+	 * @param  array $buttons TinyMCE buttons
+	 * @return array          TinyMCE buttons with our button added to it
+	 */
+	public function wusm_maps_register_buttons( $buttons ) {
+
+		// The ID value of the button we are creating from the JS file
+		if( ! in_array( 'wusmbutton', $buttons) ) {
+			array_push( $buttons, 'wusmbutton' );
+		}
+		return $buttons;
+	
+
+	}
+
 
 	function wusm_maps_enqueue_scripts_and_styles() {
 		$wusm_maps_js_vars = array(
@@ -109,9 +158,9 @@ class wusm_maps_plugin {
 			);
 		}
 
-		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false' );
-
-		wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . '/maps.js' );
+		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY&sensor=false' );
+		
+		wp_register_script( 'maps-js', plugin_dir_url( __FILE__ ) . 'maps.js' );
 		wp_enqueue_script( 'maps-js' );
 
 		wp_localize_script( 'maps-js', 'maps_vars', $wusm_maps_js_vars );
