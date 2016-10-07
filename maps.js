@@ -14,13 +14,16 @@ jQuery(document).ready(function($) {
 	// Enable the visual refresh
 	google.maps.visualRefresh = true;
 
+	var width = $('#map-canvas').width() * .000005,
+		longitude = parseFloat(maps_vars.center.lng) + width;
+
 	var map, max_height = 528,	// 600-(36*2)
 		last_marker = false,
 		last_window = false,
-		latlng = new google.maps.LatLng( maps_vars.center.lat, maps_vars.center.lng );
+		latlng = new google.maps.LatLng( maps_vars.center.lat, longitude );
 	
 	function initialize() {
-		
+	
 		var mapOptions = {
 			zoom: zoom_level,
 			disableDefaultUI: true,

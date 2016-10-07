@@ -4,7 +4,7 @@ Plugin Name: WUSM Maps
 Plugin URI:
 Description: Add maps to WUSM sites
 Author: Aaron Graham
-Version:2016.08.23.0
+Version:2016.10.07.1
 Author URI:
 */
 
@@ -145,6 +145,7 @@ class wusm_maps_plugin {
 
 
 	function wusm_maps_enqueue_scripts_and_styles() {
+		
 		$wusm_maps_js_vars = array(
 			'center'    => get_field( 'wusm_map_center', 'option' ),
 			'icon'      => get_field( 'wusm_map_icon', 'option' ),
@@ -153,8 +154,8 @@ class wusm_maps_plugin {
 
 		if ( $wusm_maps_js_vars['center'] == false ) {
 			$wusm_maps_js_vars['center'] = array(
-				'lat' => '38.635',
-				'lng' => '-90.258',
+				'lat' => '38.6350726',
+				'lng' => '-90.2644749',
 			);
 		}
 
