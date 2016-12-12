@@ -35,6 +35,14 @@ class wusm_maps_plugin {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'wusm_maps_enqueue_scripts_and_styles' ) );
 
+		if( strpos( $_SERVER['SERVER_NAME'], 'wustl.edu' ) ) {		
+			add_action('acf/init', array( $this, 'wusm_maps_google_maps_api_key' ) );
+		}
+
+	}
+
+	function wusm_maps_google_maps_api_key() {
+		acf_update_setting('google_api_key', 'AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY');
 	}
 
 	/**
