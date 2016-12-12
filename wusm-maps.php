@@ -35,7 +35,7 @@ class wusm_maps_plugin {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'wusm_maps_enqueue_scripts_and_styles' ) );
 
-		if( strpos( $_SERVER['SERVER_NAME'], 'wustl.edu' ) ) {		
+		if ( strpos( site_url(), 'wustl.edu' ) ) {
 			add_action('acf/init', array( $this, 'wusm_maps_google_maps_api_key' ) );
 		}
 
@@ -347,7 +347,7 @@ class wusm_maps_plugin {
 				echo ( get_field( 'wusm_map_phone' ) == '' ) ? '' : "<strong>Phone</strong>: " . get_field( 'wusm_map_phone' ). "</br>";
 				echo ( get_field( 'wusm_map_fax' ) == '' ) ? '' : "<strong>Fax</strong> : " . get_field( 'wusm_map_fax' ). "</br>";
 				
-				echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
+				echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='https://maps.google.com/maps' method='get'>";
 				echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
 				echo "<button class='wusm-button'>Find Directions</button>";
 				echo "</form>";
