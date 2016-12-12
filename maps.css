@@ -1,3 +1,24 @@
+.wusm-maps-section {
+	clear: both;
+	display: block;
+	border-bottom: 1px solid #d2d4d4;
+	min-height: 220px;
+	padding-bottom: 30px;
+}
+
+.wusm-maps-section:last-child {
+	border-bottom: none;
+}
+
+.wusm-maps-static-map {
+	float: right;
+}
+
+
+
+
+
+
 .maps-content {
 	padding-left: 225px;
 	background: #EEE;
@@ -96,15 +117,6 @@
 	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 
-#get-directions-box {
-	float: left;
-	width: 100%;
-}
-
-.ie7 #get-directions-box {
-	padding: 0;
-	margin: 0;
-}
 
 #address {
 	font-style: italic;
@@ -118,24 +130,6 @@
 .ie7 #address {
 	padding: 0;
 	margin-top: -22px;
-}
-
-#get-directions {
-	background: #900;
-	width: 100%;
-	max-width: 200px;
-	border: none;
-	margin: 10px 0;
-	color: #fff;
-	font-size: 12px;
-	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-	text-transform: uppercase;
-	text-shadow: 1px 1px 1px #770101;
-	height: 35px;
-}
-
-.ie7 #get-directions {
-	margin: 0;
 }
 
 .gm-style img {

@@ -297,7 +297,66 @@ class wusm_maps_plugin {
 		$output .= '</ul>';
 		$output .= '</div>';
 
-		return $output;
+		// WP_Query arguments
+		$args = array(
+			'post_type'              => array( 'location' ),
+		);
+
+		// The Query
+		$query = new WP_Query( $args );
+
+		ob_start();
+
+		// The Loop
+		if ( $query->have_posts() ) {
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				$location_array = get_field( 'wusm_map_location' );
+
+ 				$address = $location_array[ 'address' ];
+ 				$google_maps_string = str_replace( ' ', '+', $address );
+				
+ 				$lat = $location_array[ 'lat' ];
+ 				$lng = $location_array[ 'lng' ];
+ 				
+ 				$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
+				$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=color:red%7C$lat,$lng";
+				$map_styling = "&format=png&maptype=roadmap&style=feature:administrative%7Celement:geometry%7Ccolor:0xa7a7a7&style=feature:administrative%7Celement:labels.text.fill%7Ccolor:0x737373%7Cvisibility:on&style=feature:landscape%7Celement:geometry.fill%7Ccolor:0xefefef%7Cvisibility:on&style=feature:poi%7Celement:geometry.fill%7Ccolor:0xdadada%7Cvisibility:on&style=feature:poi%7Celement:labels%7Cvisibility:off&style=feature:poi%7Celement:labels.icon%7Cvisibility:off&style=feature:road%7Celement:labels.icon%7Cvisibility:off&style=feature:road%7Celement:labels.text.fill%7Ccolor:0x696969&style=feature:road.arterial%7Celement:geometry.fill%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:geometry.stroke%7Ccolor:0xd6d6d6&style=feature:road.highway%7Celement:geometry.fill%7Ccolor:0xffffff&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0xb3b3b3%7Cvisibility:on&style=feature:road.local%7Celement:geometry.fill%7Ccolor:0xffffff%7Cvisibility:on%7Cweight:1.8&style=feature:road.local%7Celement:geometry.stroke%7Ccolor:0xd7d7d7&style=feature:transit%7Ccolor:0x808080%7Cvisibility:off&style=feature:water%7Celement:geometry.fill%7Ccolor:0x0091b2";
+				$map_styling2 = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
+
+ 				echo "<div class='wusm-maps-section'>";
+ 				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling2'></a>";
+
+ 				the_title( '<h2>', '</h2>');
+ 				echo the_field( 'wusm_map_practice_name' ) . "</br>";
+				echo the_field( 'wusm_map_location_name' ) . "</br>";
+				echo the_field( 'wusm_map_street_address_1' ) . "</br>";
+				echo the_field( 'wusm_map_street_address_2' ) . "</br>";
+				echo the_field( 'wusm_map_city' ) . ", ";
+				echo the_field( 'wusm_map_state' ) . " ";
+				echo the_field( 'wusm_map_zip_code' ) . "</br>";
+				echo the_field( 'wusm_map_phone' ) . "</br>";
+				echo the_field( 'wusm_map_fax' ) . "</br>";
+				echo "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
+				echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
+				echo "<button class='wusm-button'>Find Directions</a>";
+				echo "</form>";
+
+				echo "</div>";
+			}
+		} else {
+			// no posts found
+		}
+
+		// Restore original Post Data
+		wp_reset_postdata();
+
+		
+
+		//$field_output .= "<img class='bio-location-map' src='https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=15&size=200x200&maptype=roadmap&markers=color:red%7C$lat,$lng'>";
+		$field_output .= '</a>';
+
+		return ob_get_clean();
 	}
 }
 $wusm_maps = new wusm_maps_plugin();

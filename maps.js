@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
 
 		$('#location-list li a').each(function(index) {
 			
-			if( maps_vars.icon.url != '' ) {
+			if( maps_vars.icon != '' ) {
 				image = maps_vars.icon.url;
 			} else {
 				image = '/wp-content/plugins/wusm-maps/map_marker_closed.png';
