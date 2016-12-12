@@ -374,7 +374,7 @@ class wusm_maps_plugin {
 				
 				echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='https://maps.google.com/maps' method='get'>";
 				echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
-				echo "<button class='wusm-button'>Find Directions</button>";
+				echo "<button class='wusm-button'>Geta Directions</button>";
 				echo "</form>";
 
 				the_content();
