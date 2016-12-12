@@ -328,20 +328,24 @@ class wusm_maps_plugin {
  				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling2'></a>";
 
  				the_title( '<h2>', '</h2>');
- 				echo the_field( 'wusm_map_practice_name' ) . "</br>";
-				echo the_field( 'wusm_map_location_name' ) . "</br>";
-				echo the_field( 'wusm_map_street_address_1' ) . "</br>";
-				echo the_field( 'wusm_map_street_address_2' ) . "</br>";
-				echo the_field( 'wusm_map_city' ) . ", ";
-				echo the_field( 'wusm_map_state' ) . " ";
-				echo the_field( 'wusm_map_zip_code' ) . "</br>";
-				echo the_field( 'wusm_map_phone' ) . "</br>";
-				echo the_field( 'wusm_map_fax' ) . "</br>";
-				echo "<form id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
+
+ 				echo ( get_field( 'wusm_map_practice_name' ) == '' ) ? '' : get_field( 'wusm_map_practice_name' ). "</br>";
+				echo ( get_field( 'wusm_map_location_name' ) == '' ) ? '' : get_field( 'wusm_map_location_name' ). "</br>";
+				echo ( get_field( 'wusm_map_street_address_1' ) == '' ) ? '' : get_field( 'wusm_map_street_address_1' ). "</br>";
+				echo ( get_field( 'wusm_map_street_address_2' ) == '' ) ? '' : get_field( 'wusm_map_street_address_2' ). "</br>";
+				echo get_field( 'wusm_map_city' ) . ", ";
+				echo get_field( 'wusm_map_state' ) . " ";
+				echo get_field( 'wusm_map_zip_code' ) . "</br>";
+				echo ( get_field( 'wusm_map_phone' ) == '' ) ? '' : "<strong>Phone</strong>: " . get_field( 'wusm_map_phone' ). "</br>";
+				echo ( get_field( 'wusm_map_fax' ) == '' ) ? '' : "<strong>Fax</strong> : " . get_field( 'wusm_map_fax' ). "</br>";
+				
+				echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='http://maps.google.com/maps' method='get'>";
 				echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
-				echo "<button class='wusm-button'>Find Directions</a>";
+				echo "<button class='wusm-button'>Find Directions</button>";
 				echo "</form>";
 
+				the_content();
+			
 				echo "</div>";
 			}
 		} else {

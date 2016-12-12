@@ -14,9 +14,14 @@
 	float: right;
 }
 
+.wusm-maps-section p {
+	margin-top: 25px;
+	margin-bottom: 0;
+}
 
-
-
+.wusm-maps-get-directions-form {
+	margin-top: 25px;
+}
 
 
 .maps-content {
