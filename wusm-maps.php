@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2016.12.13.13
+Version:	2016.12.13.14
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -273,7 +273,7 @@ class wusm_maps_plugin {
 				
 				echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='https://maps.google.com/maps' method='get'>";
 				echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
-				echo "<button class='wusm-button'>Find Directions</button>";
+				echo "<button class='wusm-button'>Get Directions</button>";
 				echo "</form>";
 
 				the_content();
