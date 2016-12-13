@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2016.12.13.8
+Version:	2016.12.13.9
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -85,66 +85,6 @@ class wusm_maps_plugin {
 		// Actually insert the button registered above to TinyMCE
 		add_filter( 'mce_buttons', array( $this, 'wusm_maps_register_buttons' ) );
 
-	}
-
-	function location_register_coords() {
-		register_rest_field( 'location',
-			'location',
-			array(
-				'get_callback'    => array( $this, 'location_get_coords' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
-		);
-
-		register_rest_field( 'location',
-			'image',
-			array(
-				'get_callback'    => array( $this, 'location_get_image' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
-		);
-	}
-
-	/**
-	 * get the value of the "coords" field
-	 *
-	 * @param array           $object details of current post.
-	 * @param string          $field_name name of field.
-	 * @param wp_rest_request $request current request
-	 *
-	 * @return mixed
-	 */
-	function location_get_image( $object, $field_name, $request ) {
-
-		$img_id = get_post_meta( $object['id'], 'location_image', true );
-		$size = 'map-img'; // (thumbnail, medium, large, full or custom size)
-		$image = wp_get_attachment_image_src( $img_id, $size );
-		$img = $image[0];
-
-		return $img;
-	}
-
-	/**
-	 * get the value of the "coords" field
-	 *
-	 * @param array           $object details of current post.
-	 * @param string          $field_name name of field.
-	 * @param wp_rest_request $request current request
-	 *
-	 * @return mixed
-	 */
-	function location_get_coords( $object, $field_name, $request ) {
-		$location = get_post_meta( $object['id'], 'location', true );
-
-		if ( $location == null ) {
-
-			$location = get_post_meta( $object['id'], 'wusm_map_location', true );
-
-		}
-
-		return $location;
 	}
 
 	/**
