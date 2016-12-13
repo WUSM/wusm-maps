@@ -355,11 +355,19 @@ class wusm_maps_plugin {
  				$lng = $location_array[ 'lng' ];
  				
  				$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
-				$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=icon:" . WUSM_MAPS_PLUGIN_URL . "location.png|$lat,$lng";
-				$map_styling = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
+ 				if ( strpos( site_url(), '.dev' ) || strpos( site_url(), '-test' ) ) {
+ 					$marker_icon = "https://medicine.wustl.edu/wp-content/uploads/location.png";
+ 				} else {
+ 					$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
+ 				}
+				$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=icon:$marker_icon%7C$lat,$lng";
+				$map_options2 = "center=$lat,$lng&zoom=15&size=300x220&markers=color:red%7C$lat,$lng";
+				
+				$map_styling = "&format=png&maptype=roadmap&style=feature:administrative%7Celement:geometry%7Ccolor:0xa7a7a7&style=feature:administrative%7Celement:labels.text.fill%7Ccolor:0x737373%7Cvisibility:on&style=feature:landscape%7Celement:geometry.fill%7Ccolor:0xefefef%7Cvisibility:on&style=feature:poi%7Celement:geometry.fill%7Ccolor:0xdadada%7Cvisibility:on&style=feature:poi%7Celement:labels%7Cvisibility:off&style=feature:poi%7Celement:labels.icon%7Cvisibility:off&style=feature:road%7Celement:labels.icon%7Cvisibility:off&style=feature:road%7Celement:labels.text.fill%7Ccolor:0x696969&style=feature:road.arterial%7Celement:geometry.fill%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:geometry.stroke%7Ccolor:0xd6d6d6&style=feature:road.highway%7Celement:geometry.fill%7Ccolor:0xffffff&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0xb3b3b3%7Cvisibility:on&style=feature:road.local%7Celement:geometry.fill%7Ccolor:0xffffff%7Cvisibility:on%7Cweight:1.8&style=feature:road.local%7Celement:geometry.stroke%7Ccolor:0xd7d7d7&style=feature:transit%7Ccolor:0x808080%7Cvisibility:off&style=feature:water%7Celement:geometry.fill%7Ccolor:0x0091b2";
+				$map_styling2 = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
 
  				echo "<div class='wusm-maps-section'>";
- 				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
+ 				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_icon$map_styling2></a>";
 
  				echo "<h2>" . get_field( 'wusm_map_practice_name' ). "</h2>";
 				echo ( get_field( 'wusm_map_location_name' ) == '' ) ? '' : get_field( 'wusm_map_location_name' ). "</br>";
@@ -373,7 +381,7 @@ class wusm_maps_plugin {
 				
 				echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='https://maps.google.com/maps' method='get'>";
 				echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
-				echo "<button class='wusm-button'>Get Directions</button>";
+				echo "<button class='wusm-button'>Find Directions</button>";
 				echo "</form>";
 
 				the_content();
