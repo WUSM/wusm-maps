@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2016.12.13.7
+Version:	2016.12.13.8
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -313,13 +313,11 @@ class wusm_maps_plugin {
  					$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
  				}
 				$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=icon:$marker_icon%7C$lat,$lng";
-				$map_options2 = "center=$lat,$lng&zoom=15&size=300x220&markers=color:red%7C$lat,$lng";
 				
-				$map_styling = "&format=png&maptype=roadmap&style=feature:administrative%7Celement:geometry%7Ccolor:0xa7a7a7&style=feature:administrative%7Celement:labels.text.fill%7Ccolor:0x737373%7Cvisibility:on&style=feature:landscape%7Celement:geometry.fill%7Ccolor:0xefefef%7Cvisibility:on&style=feature:poi%7Celement:geometry.fill%7Ccolor:0xdadada%7Cvisibility:on&style=feature:poi%7Celement:labels%7Cvisibility:off&style=feature:poi%7Celement:labels.icon%7Cvisibility:off&style=feature:road%7Celement:labels.icon%7Cvisibility:off&style=feature:road%7Celement:labels.text.fill%7Ccolor:0x696969&style=feature:road.arterial%7Celement:geometry.fill%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:geometry.stroke%7Ccolor:0xd6d6d6&style=feature:road.highway%7Celement:geometry.fill%7Ccolor:0xffffff&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0xb3b3b3%7Cvisibility:on&style=feature:road.local%7Celement:geometry.fill%7Ccolor:0xffffff%7Cvisibility:on%7Cweight:1.8&style=feature:road.local%7Celement:geometry.stroke%7Ccolor:0xd7d7d7&style=feature:transit%7Ccolor:0x808080%7Cvisibility:off&style=feature:water%7Celement:geometry.fill%7Ccolor:0x0091b2";
-				$map_styling2 = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
+				$map_styling = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
 
  				echo "<div class='wusm-maps-section'>";
- 				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling2'></a>";
+ 				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
 
  				echo "<h2>" . get_field( 'wusm_map_practice_name' ). "</h2>";
 				echo ( get_field( 'wusm_map_location_name' ) == '' ) ? '' : get_field( 'wusm_map_location_name' ). "</br>";
