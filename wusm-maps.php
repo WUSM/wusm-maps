@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2016.12.13.11
+Version:	2016.12.13.12
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -86,6 +86,7 @@ class wusm_maps_plugin {
 		// Actually insert the button registered above to TinyMCE
 		add_filter( 'mce_buttons', array( $this, 'wusm_maps_register_buttons' ) );
 
+		add_editor_style( WUSM_MAPS_PLUGIN_URL . 'maps.css' );
 	}
 
 	/**
@@ -97,7 +98,7 @@ class wusm_maps_plugin {
 	public function wusm_maps_add_buttons( $plugin_array ) {
 
 		// http://codex.wordpress.org/TinyMCE
-		$plugin_array['wusm_maps_mce_button'] = plugins_url( 'js/wusm-maps-tinymce.js', __FILE__ );
+		$plugin_array['wusm_maps_mce_button'] = WUSM_MAPS_PLUGIN_URL . 'js/wusm-maps-tinymce.js';
 		return $plugin_array;
 
 	}
@@ -122,7 +123,7 @@ class wusm_maps_plugin {
 
 	function wusm_maps_enqueue_scripts_and_styles() {
 		
-		wp_register_style( 'maps-styles', plugins_url( 'maps.css', __FILE__ ) );
+		wp_register_style( 'maps-styles', WUSM_MAPS_PLUGIN_URL . 'maps.css' );
 		wp_enqueue_style( 'maps-styles' );
 
 	}
@@ -241,26 +242,26 @@ class wusm_maps_plugin {
 				$query->the_post();
 				$location_array = get_field( 'wusm_map_location' );
 
- 				$address = $location_array[ 'address' ];
- 				$google_maps_string = str_replace( ' ', '+', $address );
+				$address = $location_array[ 'address' ];
+				$google_maps_string = str_replace( ' ', '+', $address );
 				
- 				$lat = $location_array[ 'lat' ];
- 				$lng = $location_array[ 'lng' ];
- 				
- 				$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
- 				if ( strpos( site_url(), '.dev' ) || strpos( site_url(), '-test' ) ) {
- 					$marker_icon = "https://medicine.wustl.edu/wp-content/uploads/location.png";
- 				} else {
- 					$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
- 				}
+				$lat = $location_array[ 'lat' ];
+				$lng = $location_array[ 'lng' ];
+				
+				$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
+				if ( strpos( site_url(), '.dev' ) || strpos( site_url(), '-test' ) ) {
+					$marker_icon = "https://medicine.wustl.edu/wp-content/uploads/location.png";
+				} else {
+					$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
+				}
 				$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=icon:$marker_icon%7C$lat,$lng";
 				
 				$map_styling = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
 
- 				echo "<div class='wusm-maps-section'>";
- 				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
+				echo "<div class='wusm-maps-section'>";
+				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
 
- 				echo "<h2>" . get_field( 'wusm_map_practice_name' ). "</h2>";
+				echo "<h2>" . get_field( 'wusm_map_practice_name' ). "</h2>";
 				echo ( get_field( 'wusm_map_location_name' ) == '' ) ? '' : get_field( 'wusm_map_location_name' ). "</br>";
 				echo ( get_field( 'wusm_map_street_address_1' ) == '' ) ? '' : get_field( 'wusm_map_street_address_1' ). "</br>";
 				echo ( get_field( 'wusm_map_street_address_2' ) == '' ) ? '' : get_field( 'wusm_map_street_address_2' ). "</br>";
