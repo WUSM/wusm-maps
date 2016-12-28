@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2016.12.14.3
+Version:	2016.12.28.0
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -33,10 +33,8 @@ class wusm_maps_plugin {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'wusm_maps_enqueue_scripts_and_styles' ) );
 
-		if ( strpos( site_url(), 'wustl.edu' ) ) {
-			add_action('acf/init', array( $this, 'wusm_maps_google_maps_api_key' ) );
-		}
-
+		add_action('acf/init', array( $this, 'wusm_maps_google_maps_api_key' ) );
+		
 	}
 
 	/**
@@ -66,7 +64,11 @@ class wusm_maps_plugin {
 	}
 
 	function wusm_maps_google_maps_api_key() {
-		acf_update_setting('google_api_key', 'AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY');
+		if ( strpos( site_url(), 'wustl.edu' ) ) {
+			acf_update_setting('google_api_key', 'AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY');
+		} else {
+			acf_update_setting('google_api_key', 'AIzaSyDKU0kyjVfq6FYc44VHc5k1gkhZ_Q9jmis');
+		}
 	}
 
 	/**
@@ -221,6 +223,7 @@ class wusm_maps_plugin {
 		// WP_Query arguments
 		$args = array(
 			'post_type' => array( 'location' ),
+			'orderby'   => 'menu_order',
 		);
 
 		if ( $atts[ 'ids' ] ) {
