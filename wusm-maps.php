@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2017.01.12.0
+Version:	2017.01.23.0
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -16,12 +16,6 @@ class wusm_maps_plugin {
 		acf_update_setting('select2_version', 4);
 
 		add_action( 'admin_init', array( $this, 'wusm_maps_helper_admin_init' ) );
-
-		// Settings page for the plugin
-		acf_add_options_sub_page(array(
-			'menu'   => 'Maps Settings',
-			'parent' => 'edit.php?post_type=location',
-		));
 
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
 
