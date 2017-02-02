@@ -32,3 +32,29 @@
 		margin-bottom: 25px;
 	}
 }
+
+.wusm-button {
+	display: inline-block;
+	line-height: 14px;
+	margin: 15px 10px 0;
+	font-size: 14px;
+	text-transform: uppercase;
+	color: #fff;
+	background: #990000;
+	padding: 15px 25px;
+	border: none;
+	border-radius: 3px;
+	letter-spacing: 1px;
+	font-weight: 600;
+	transition: background 0.1s ease;
+	text-align: center;
+}
+
+.wusm-button:hover {
+	background: #c40000;
+	color: #fff;
+}
+
+article .wusm-button {
+	margin: 0 20px 0 0;
+}
