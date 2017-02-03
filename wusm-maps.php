@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2017.01.12.0
+Version:	2017.02.02.0
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -16,12 +16,6 @@ class wusm_maps_plugin {
 		acf_update_setting('select2_version', 4);
 
 		add_action( 'admin_init', array( $this, 'wusm_maps_helper_admin_init' ) );
-
-		// Settings page for the plugin
-		acf_add_options_sub_page(array(
-			'menu'   => 'Maps Settings',
-			'parent' => 'edit.php?post_type=location',
-		));
 
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
 
@@ -221,9 +215,10 @@ class wusm_maps_plugin {
 	
 		// WP_Query arguments
 		$args = array(
-			'post_type' => array( 'location' ),
-			'order'		=> 'ASC',
-			'orderby'   => 'menu_order',
+			'post_type'      => array( 'location' ),
+			'order'          => 'ASC',
+			'orderby'        => 'menu_order',
+			'posts_per_page' => '-1',
 		);
 
 		if ( $atts[ 'ids' ] ) {
@@ -241,43 +236,57 @@ class wusm_maps_plugin {
 				$query->the_post();
 				$location_array = get_field( 'wusm_map_location' );
 
-				$address = $location_array[ 'address' ];
-				$google_maps_string = str_replace( ' ', '+', $address );
-				
-				$lat = $location_array[ 'lat' ];
-				$lng = $location_array[ 'lng' ];
-				
-				$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
-				if ( strpos( site_url(), '.dev' ) || strpos( site_url(), '-test' ) ) {
-					$marker_icon = "https://medicine.wustl.edu/wp-content/uploads/location.png";
-				} else {
-					$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
+				if ( $location_array == null ) {
+					$location_array = get_field( 'location' );
 				}
-				$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=icon:$marker_icon%7C$lat,$lng";
+
+				if ( $location_array == null ) {
+
+					echo "<h2>" . get_the_title() . "</h2>";
+
+				} else {
+
+					$address = $location_array[ 'address' ];
+					$google_maps_string = str_replace( ' ', '+', $address );
+					
+					$lat = $location_array[ 'lat' ];
+					$lng = $location_array[ 'lng' ];
+					
+					$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
+					if ( strpos( site_url(), '.dev' ) || strpos( site_url(), '-test' ) ) {
+						$marker_icon = "https://medicine.wustl.edu/wp-content/uploads/location.png";
+					} else {
+						$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
+					}
+					$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=icon:$marker_icon%7C$lat,$lng";
+					
+					$map_styling = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
+
+					echo "<div class='wusm-maps-section'>";
+					echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
+
+					echo  ( get_field( 'wusm_map_practice_name' ) == '' ) ? "<h2>" . get_the_title() . "</h2>" : "<h2>" . get_field( 'wusm_map_practice_name' ) . "</h2>";
+					if ( get_field( 'wusm_map_location_name' ) != '' ) { echo get_field( 'wusm_map_location_name' ). "</br>"; }
+					if ( get_field( 'wusm_map_street_address_1' ) != '' ) { echo get_field( 'wusm_map_street_address_1' ). "</br>"; }
+					if ( get_field( 'wusm_map_street_address_2' ) != '' ) { echo get_field( 'wusm_map_street_address_2' ). "</br>"; }
+					
+					if ( get_field( 'wusm_map_city' ) != '' &&
+						 get_field( 'wusm_map_state' ) != '' &&
+						 get_field( 'wusm_map_zip_code' ) != '' ) {
+						echo get_field( 'wusm_map_city' ) . ", " . get_field( 'wusm_map_state' ) . " " . get_field( 'wusm_map_zip_code' ) . "</br>";
+					}
+					if ( get_field( 'wusm_map_phone' ) != '' ) { echo "<strong>Phone</strong>: " . get_field( 'wusm_map_phone' ). "</br>"; }
+					if ( get_field( 'wusm_map_fax' ) != '' ) { echo "<strong>Fax</strong> : " . get_field( 'wusm_map_fax' ). "</br>"; }
+					
+					echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='https://maps.google.com/maps' method='get'>";
+					echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
+					echo "<button class='wusm-button'>Get Directions</button>";
+					echo "</form>";
+
+					the_content();
 				
-				$map_styling = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
-
-				echo "<div class='wusm-maps-section'>";
-				echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
-
-				echo "<h2>" . get_field( 'wusm_map_practice_name' ). "</h2>";
-				echo ( get_field( 'wusm_map_location_name' ) == '' ) ? '' : get_field( 'wusm_map_location_name' ). "</br>";
-				echo ( get_field( 'wusm_map_street_address_1' ) == '' ) ? '' : get_field( 'wusm_map_street_address_1' ). "</br>";
-				echo ( get_field( 'wusm_map_street_address_2' ) == '' ) ? '' : get_field( 'wusm_map_street_address_2' ). "</br>";
-				echo get_field( 'wusm_map_city' ) . ", ";
-				echo get_field( 'wusm_map_state' ) . " ";
-				echo get_field( 'wusm_map_zip_code' ) . "</br>";
-				echo ( get_field( 'wusm_map_phone' ) == '' ) ? '' : "<strong>Phone</strong>: " . get_field( 'wusm_map_phone' ). "</br>";
-				echo ( get_field( 'wusm_map_fax' ) == '' ) ? '' : "<strong>Fax</strong> : " . get_field( 'wusm_map_fax' ). "</br>";
-				
-				echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='https://maps.google.com/maps' method='get'>";
-				echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
-				echo "<button class='wusm-button'>Get Directions</button>";
-				echo "</form>";
-
-				the_content();
-			
-				echo "</div>";
+					echo "</div>";
+				}
 			}
 		} else {
 			// no posts found
