@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	2017.02.07.1
+Version:	2017.02.07.2
 Author URI: 	https://medicine.wustl.edu
 */
 
@@ -265,7 +265,7 @@ class wusm_maps_plugin {
 					echo "<div class='wusm-maps-section'>";
 					echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
 
-					echo  ( get_field( 'wusm_map_practice_name' ) == '' ) ? "<h2 class='wusm-map-title'>" . get_the_title() . "</h2>" : "<h2>" . get_field( 'wusm_map_practice_name' ) . "</h2>";
+					echo  ( get_field( 'wusm_map_practice_name' ) == '' ) ? "<h2 class='wusm-map-title'>" . get_the_title() . "</h2>" : "<h2 class='wusm-map-title'>" . get_field( 'wusm_map_practice_name' ) . "</h2>";
 					if ( get_field( 'wusm_map_location_name' ) != '' ) { echo get_field( 'wusm_map_location_name' ). "</br>"; }
 					if ( get_field( 'wusm_map_street_address_1' ) != '' ) { echo get_field( 'wusm_map_street_address_1' ). "</br>"; }
 					if ( get_field( 'wusm_map_street_address_2' ) != '' ) { echo get_field( 'wusm_map_street_address_2' ). "</br>"; }
