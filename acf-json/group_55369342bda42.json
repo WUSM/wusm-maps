@@ -217,6 +217,13 @@
                 "operator": "==",
                 "value": "location"
             }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "office-location"
+            }
         ]
     ],
     "menu_order": 8,
@@ -227,5 +234,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1452545670
+    "modified": 1499270700
 }
