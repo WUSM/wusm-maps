@@ -32,8 +32,9 @@ article .callout h2.wusm-map-title {
 @media screen and (max-width: 700px) {
 	.wusm-maps-static-map {
 		float: left;
-		margin-right: 0;
+		margin-right: 25px;
 		margin-bottom: 25px;
+		margin-left: 0;
 	}
 }
 
