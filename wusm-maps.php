@@ -4,11 +4,12 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	    2017.07.14.1
+Version:	    2018.10.17.1
 Author URI: 	https://medicine.wustl.edu
 */
 
 class wusm_maps_plugin {
+	private $google_maps_api_key;
 	
 	public function __construct() {
 		$this->setup_constants();
@@ -58,10 +59,12 @@ class wusm_maps_plugin {
 
 	function wusm_maps_google_maps_api_key() {
 		if ( strpos( site_url(), 'wustl.edu' ) ) {
-			acf_update_setting('google_api_key', 'AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY');
+			$this->google_maps_api_key = 'AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY';
 		} else {
-			acf_update_setting('google_api_key', 'AIzaSyDKU0kyjVfq6FYc44VHc5k1gkhZ_Q9jmis');
+			$this->google_maps_api_key = 'AIzaSyDKU0kyjVfq6FYc44VHc5k1gkhZ_Q9jmis';
 		}
+
+		acf_update_setting('google_api_key', $this->google_maps_api_key );
 	}
 
 	/**
@@ -263,7 +266,7 @@ class wusm_maps_plugin {
 					$map_styling = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
 
 					echo "<div class='wusm-maps-section'>";
-					echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling'></a>";
+					echo "<a href='https://www.google.com/maps/search/$google_maps_string'><img class='wusm-maps-static-map' src='$map_url$map_options$map_styling&key={$this->google_maps_api_key}'></a>";
 
 					echo  ( get_field( 'wusm_map_practice_name' ) == '' ) ? "<h2 class='wusm-map-title'>" . get_the_title() . "</h2>" : "<h2 class='wusm-map-title'>" . get_field( 'wusm_map_practice_name' ) . "</h2>";
 					if ( get_field( 'wusm_map_location_name' ) != '' ) { echo get_field( 'wusm_map_location_name' ). "</br>"; }
