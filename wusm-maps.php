@@ -10,9 +10,15 @@ Author URI: 	https://medicine.wustl.edu
 
 class wusm_maps_plugin {
 	private $google_maps_api_key;
-	
+
 	public function __construct() {
 		$this->setup_constants();
+
+		if ( strpos( site_url(), 'wustl.edu' ) ) {
+			$this->google_maps_api_key = 'AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY';
+		} else {
+			$this->google_maps_api_key = 'AIzaSyDKU0kyjVfq6FYc44VHc5k1gkhZ_Q9jmis';
+		}
 
 		acf_update_setting('select2_version', 4);
 
@@ -21,14 +27,14 @@ class wusm_maps_plugin {
 		add_shortcode( 'wusm_map', array( $this, 'maps_shortcode' ) );
 
 		add_action( 'init', array( $this, 'register_maps_location_post_type' ) );
-	
+
 		// Using JSON to sync fields instead of PHP includes
 		add_filter( 'acf/settings/load_json', array( $this, 'wusm_maps_load_acf_json' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'wusm_maps_enqueue_scripts_and_styles' ) );
 
 		add_action('acf/init', array( $this, 'wusm_maps_google_maps_api_key' ) );
-		
+
 	}
 
 	/**
@@ -58,12 +64,6 @@ class wusm_maps_plugin {
 	}
 
 	function wusm_maps_google_maps_api_key() {
-		if ( strpos( site_url(), 'wustl.edu' ) ) {
-			$this->google_maps_api_key = 'AIzaSyCjJ28lFJ8KIaQBJ32JQypx3PfGANtN5YY';
-		} else {
-			$this->google_maps_api_key = 'AIzaSyDKU0kyjVfq6FYc44VHc5k1gkhZ_Q9jmis';
-		}
-
 		acf_update_setting('google_api_key', $this->google_maps_api_key );
 	}
 
@@ -72,8 +72,8 @@ class wusm_maps_plugin {
 	 *
 	 * @since  2016.06.01.0
 	 */
-	public function wusm_maps_helper_admin_init() {	
-	
+	public function wusm_maps_helper_admin_init() {
+
 		// Register the TinyMCE JS that adds the button
 		add_filter( 'mce_external_plugins', array( $this, 'wusm_maps_add_buttons' ) );
 
@@ -110,13 +110,13 @@ class wusm_maps_plugin {
 			array_push( $buttons, 'wusmbutton' );
 		}
 		return $buttons;
-	
+
 
 	}
 
 
 	function wusm_maps_enqueue_scripts_and_styles() {
-		
+
 		wp_register_style( 'maps-styles', WUSM_MAPS_PLUGIN_URL . 'maps.css' );
 		wp_enqueue_style( 'maps-styles' );
 
@@ -215,7 +215,7 @@ class wusm_maps_plugin {
 		);
 
 		$atts = shortcode_atts( $default_atts, $atts, 'wusm_map' );
-	
+
 		// WP_Query arguments
 		$args = array(
 			'post_type'      => array( 'location' ),
@@ -227,7 +227,7 @@ class wusm_maps_plugin {
 		if ( $atts[ 'ids' ] ) {
 			$args[ 'post__in' ] = array_map( 'intval', explode( ',', $atts[ 'ids' ] ) );
 		}
-		
+
 		// The Query
 		$query = new WP_Query( $args );
 
@@ -251,10 +251,10 @@ class wusm_maps_plugin {
 
 					$address = $location_array[ 'address' ];
 					$google_maps_string = str_replace( ' ', '+', $address );
-					
+
 					$lat = $location_array[ 'lat' ];
 					$lng = $location_array[ 'lng' ];
-					
+
 					$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
 					if ( strpos( site_url(), '.test' ) || strpos( site_url(), '-test' ) ) {
 						$marker_icon = "https://medicine.wustl.edu/wp-content/uploads/location.png";
@@ -262,7 +262,7 @@ class wusm_maps_plugin {
 						$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
 					}
 					$map_options = "center=$lat,$lng&zoom=15&size=300x220&markers=icon:$marker_icon%7C$lat,$lng";
-					
+
 					$map_styling = "&format=png&maptype=roadmap&style=element:geometry%7Ccolor:0xf5f5f5&style=element:labels.icon%7Cvisibility:off&style=element:labels.text.fill%7Ccolor:0x616161&style=element:labels.text.stroke%7Ccolor:0xf5f5f5&style=feature:administrative.land_parcel%7Celement:labels.text.fill%7Ccolor:0xbdbdbd&style=feature:poi%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:poi.park%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:road%7Celement:geometry%7Ccolor:0xffffff&style=feature:road.arterial%7Celement:labels.text.fill%7Ccolor:0x757575&style=feature:road.highway%7Celement:geometry%7Ccolor:0xdadada&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0x616161&style=feature:road.local%7Celement:labels.text.fill%7Ccolor:0x9e9e9e&style=feature:transit.line%7Celement:geometry%7Ccolor:0xe5e5e5&style=feature:transit.station%7Celement:geometry%7Ccolor:0xeeeeee&style=feature:water%7Celement:geometry%7Ccolor:0xc9c9c9&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x9e9e9e";
 
 					echo "<div class='wusm-maps-section'>";
@@ -272,7 +272,7 @@ class wusm_maps_plugin {
 					if ( get_field( 'wusm_map_location_name' ) != '' ) { echo get_field( 'wusm_map_location_name' ). "</br>"; }
 					if ( get_field( 'wusm_map_street_address_1' ) != '' ) { echo get_field( 'wusm_map_street_address_1' ). "</br>"; }
 					if ( get_field( 'wusm_map_street_address_2' ) != '' ) { echo get_field( 'wusm_map_street_address_2' ). "</br>"; }
-					
+
 					if ( get_field( 'wusm_map_city' ) != '' &&
 						 get_field( 'wusm_map_state' ) != '' &&
 						 get_field( 'wusm_map_zip_code' ) != '' ) {
@@ -280,14 +280,14 @@ class wusm_maps_plugin {
 					}
 					if ( get_field( 'wusm_map_phone' ) != '' ) { echo "<strong>Phone</strong>: " . get_field( 'wusm_map_phone' ). "</br>"; }
 					if ( get_field( 'wusm_map_fax' ) != '' ) { echo "<strong>Fax</strong> : " . get_field( 'wusm_map_fax' ). "</br>"; }
-					
+
 					echo "<form class='wusm-maps-get-directions-form' id='get-directions-box' action='https://maps.google.com/maps' method='get'>";
 					echo "<input type='hidden' name='daddr' value='$lat,$lng'>";
 					echo "<button class='wusm-button'>Get Directions</button>";
 					echo "</form>";
 
 					the_content();
-				
+
 					echo "</div>";
 				}
 			}
