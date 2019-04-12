@@ -4,7 +4,7 @@ Plugin Name: 	WUSM Maps
 Plugin URI:		https://medicine.wustl.edu
 Description:	Add maps to WUSM sites
 Author:			Aaron Graham
-Version:	    2018.10.17.1
+Version:	    2019.04.12.1
 Author URI: 	https://medicine.wustl.edu
 */
 
