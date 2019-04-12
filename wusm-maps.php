@@ -256,7 +256,7 @@ class wusm_maps_plugin {
 					$lng = $location_array[ 'lng' ];
 					
 					$map_url = "https://maps.googleapis.com/maps/api/staticmap?";
-					if ( strpos( site_url(), '.dev' ) || strpos( site_url(), '-test' ) ) {
+					if ( strpos( site_url(), '.test' ) || strpos( site_url(), '-test' ) ) {
 						$marker_icon = "https://medicine.wustl.edu/wp-content/uploads/location.png";
 					} else {
 						$marker_icon = WUSM_MAPS_PLUGIN_URL . "location.png";
